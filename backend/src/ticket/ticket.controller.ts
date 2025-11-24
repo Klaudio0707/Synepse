@@ -2,14 +2,18 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
-
+import { Prioridade } from './entities/ticket.entity';
 @Controller('ticket')
 export class TicketController {
   constructor(private readonly ticketService: TicketService) {}
 
   @Post()
-  create(@Body() createTicketDto: CreateTicketDto) {
-    return this.ticketService.create(createTicketDto);
+  async gerarSenha(
+    @Body('prioridade') prioridade: Prioridade,
+    @Body('nome') nome?: string,
+    @Body('cpf') cpf?: string,
+  ) {
+    return this.ticketsService.criarSenha(prioridade, nome, cpf);
   }
 
   @Get()
