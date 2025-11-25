@@ -13,26 +13,26 @@ export class TicketController {
     @Body('nome') nome?: string,
     @Body('cpf') cpf?: string,
   ) {
-    return this.ticketsService.criarSenha(prioridade, nome, cpf);
+    return this.ticketService.criarSenha(prioridade, nome, cpf);
   }
 
-  @Get()
-  findAll() {
-    return this.ticketService.findAll();
-  }
+  // @Get()
+  // findAll() {
+  //   return this.ticketService.findAll();
+  // }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ticketService.findOne(+id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.ticketService.findOne(+id);
+  // }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTicketDto: UpdateTicketDto) {
-    return this.ticketService.update(+id, updateTicketDto);
-  }
+  // @Patch(':id')
+  // update(@Param('id') id: string, @Body() updateTicketDto: UpdateTicketDto) {
+  //   return this.ticketService.update(+id, updateTicketDto);
+  // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ticketService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.ticketService.remove(+id);
+  // }
 }
