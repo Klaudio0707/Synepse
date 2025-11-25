@@ -8,7 +8,7 @@ export class UsuarioEntidade extends Model<UsuarioEntidade> {
     type: DataType.UUID, // <--- O SEGREDO ESTÁ AQUI
     defaultValue: DataType.UUIDV4,
   })
-  declare id: string;
+  declare usuarioId: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
   declare usuarioNome: string;
