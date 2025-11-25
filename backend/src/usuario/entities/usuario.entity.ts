@@ -1,8 +1,15 @@
-import { Column, Model, Table, DataType, HasMany } from 'sequelize-typescript';
+import { Column, Model, Table, DataType, HasMany, PrimaryKey } from 'sequelize-typescript';
 import { TicketEntidade } from 'src/ticket/entities/ticket.entity';
 
-@Table({ tableName: 'users' })
-export class UsuarioEntidade extends Model {
+@Table({ tableName: 'usuarios' })
+export class UsuarioEntidade extends Model<UsuarioEntidade> {
+  @PrimaryKey
+  @Column({
+    type: DataType.UUID, // <--- O SEGREDO ESTÁ AQUI
+    defaultValue: DataType.UUIDV4,
+  })
+  declare id: string;
+
   @Column({ type: DataType.STRING, allowNull: false })
   declare usuarioNome: string;
 
@@ -12,9 +19,9 @@ export class UsuarioEntidade extends Model {
   @Column({ type: DataType.STRING, allowNull: false })
   declare usuarioSenha: string; // Em produção, isso seria hash
 
-  @Column({ 
-    type: DataType.ENUM('ADMIN', 'ATENDENTE'), 
-    defaultValue: 'ATENDENTE' 
+  @Column({
+    type: DataType.ENUM('ADMIN', 'ATENDENTE'),
+    defaultValue: 'ATENDENTE'
   })
   declare permissaoUsuario: string;
 

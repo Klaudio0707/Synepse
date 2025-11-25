@@ -5,9 +5,10 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { UsuarioEntidade } from './entities/usuario.entity';
 
 @Module({
-  imports:[
+  imports: [
     SequelizeModule.forFeature([UsuarioEntidade]),],
   controllers: [UsuarioController],
   providers: [UsuarioService],
+  exports: [UsuarioService]
 })
-export class UsuarioModule {}
+export class UsuarioModule { }

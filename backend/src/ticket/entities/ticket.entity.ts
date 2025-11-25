@@ -2,7 +2,6 @@ import { Column, Model, Table, DataType, ForeignKey, BelongsTo, PrimaryKey } fro
 import { PacienteEntidade } from 'src/paciente/entities/paciente.entity';
 import { UsuarioEntidade } from 'src/usuario/entities/usuario.entity';
 
-// Enums exigidos pelo PDF
 export enum Prioridade {
   SP = 'SP', // Prioritária
   SG = 'SG', // Geral
@@ -13,50 +12,47 @@ export enum StatusTicket {
   PENDENTE = 'PENDENTE',
   CHAMADO = 'CHAMADO',
   ATENDIDO = 'ATENDIDO',
-  CANCELADO = 'CANCELADO', 
+  CANCELADO = 'CANCELADO',
 }
 
 @Table({ tableName: 'tickets' })
-export class TicketEntidade extends Model {
-     @PrimaryKey
+export class TicketEntidade extends Model<TicketEntidade> {
+  @PrimaryKey
   @Column({
     type: DataType.UUID,
     defaultValue: DataType.UUIDV4,
   })
-  declare ticketId: string;
-  
+  declare ticketId?: string;
+
   @Column({ type: DataType.STRING, allowNull: false })
-  codigo: string; // YYMMDD-PPSQ
+  declare codigo: string; // YYMMDD-PPSQ
 
   @Column({ type: DataType.ENUM(...Object.values(Prioridade)), allowNull: false })
-  prioridade: Prioridade;
+  declare prioridade: Prioridade;
 
   @Column({ type: DataType.ENUM(...Object.values(StatusTicket)), defaultValue: StatusTicket.PENDENTE })
-  status: StatusTicket;
+  declare status?: StatusTicket;
 
- 
   @Column({ type: DataType.DATE, defaultValue: DataType.NOW })
-  data_emissao: Date;
+  declare data_emissao?: Date;
 
   @Column({ type: DataType.DATE, allowNull: true })
-  data_chamada: Date;
+  declare data_chamada?: Date;
 
   @Column({ type: DataType.DATE, allowNull: true })
-  data_finalizacao: Date;
-
-  // --- RELACIONAMENTOS (Foreign Keys) ---
+  declare data_finalizacao?: Date;
 
   @ForeignKey(() => PacienteEntidade)
   @Column({ type: DataType.UUID, allowNull: false })
-  pacienteId: string;
+  declare pacienteId?: string;
 
   @BelongsTo(() => PacienteEntidade)
-  paciente: PacienteEntidade;
+  declare paciente?: PacienteEntidade;
 
   @ForeignKey(() => UsuarioEntidade)
-  @Column({ type: DataType.INTEGER, allowNull: true }) // Nullable: nasce sem atendente
-  usuarioId: number;
+  @Column({ type: DataType.UUID, allowNull: true })
+  declare usuarioId?: string;
 
   @BelongsTo(() => UsuarioEntidade)
- usuario: UsuarioEntidade;
+  declare usuario?: UsuarioEntidade;
 }

@@ -6,9 +6,9 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { PacienteEntidade } from 'src/paciente/entities/paciente.entity';
 
 @Module({
-  imports:[
-    SequelizeModule.forFeature([TicketEntidade,PacienteEntidade]),],
+  imports: [
+    SequelizeModule.forFeature([TicketEntidade, PacienteEntidade]),],
   controllers: [TicketController],
   providers: [TicketService],
 })
-export class TicketModule {}
+export class TicketModule { }

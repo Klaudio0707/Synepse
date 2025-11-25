@@ -5,7 +5,7 @@ import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Prioridade } from './entities/ticket.entity';
 @Controller('ticket')
 export class TicketController {
-  constructor(private readonly ticketService: TicketService) {}
+  constructor(private readonly ticketService: TicketService) { }
 
   @Post()
   async gerarSenha(

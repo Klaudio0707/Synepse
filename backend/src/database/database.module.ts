@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
-import databaseConfig from '../config/database.config'; 
+import databaseConfig from '../config/database.config';
 
 @Module({
   imports: [
@@ -16,4 +16,4 @@ import databaseConfig from '../config/database.config';
     }),
   ],
 })
-export class DatabaseModule {}
+export class DatabaseModule { }
