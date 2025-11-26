@@ -51,4 +51,99 @@ export class TicketService {
 
     return novoTicket;
   }
+  async chamarProximoTicket(usuarioId:string){
+    const ultimaChamada = await this.ticket.findOne({
+      where: {status: {[Op.or]: [StatusTicket.CHAMADO, StatusTicket.ATENDIDO]}}
+    });
+
+    let proximaPrioridade: Prioridade | null = null;
+
+    if (ultimaChamada?.prioridade === Prioridade.SP) {
+      const temSE = await this.verificarFila(Prioridade.SE);
+      if (temSE) proximaPrioridade = Prioridade.SE;
+      else {
+        const temSG = await this.verificarFila(Prioridade.SG);
+        if (temSG) proximaPrioridade = Prioridade.SG;
+      }
+    }
+    
+   
+    if (!proximaPrioridade) {
+      const temSP = await this.verificarFila(Prioridade.SP);
+      if (temSP) {
+        proximaPrioridade = Prioridade.SP;
+      } else {
+        const temSE = await this.verificarFila(Prioridade.SE);
+        if (temSE) proximaPrioridade = Prioridade.SE;
+        else proximaPrioridade = Prioridade.SG; // Sobra a Geral
+      }
+    }
+
+    const proximoTicket = await this.ticket.findOne({
+      where: {
+        status: StatusTicket.PENDENTE,
+        prioridade: proximaPrioridade
+      },
+      order: [['data_emissao', 'ASC']],
+      include: [this.paciente]
+    });
+
+    if (!proximoTicket) {
+      throw new Error('Não há senhas na fila para atendimento.');
+    }
+
+    return proximoTicket.update({
+      status: StatusTicket.CHAMADO,
+      usuarioId: usuarioId,
+      data_chamada: new Date(),
+    });
+    
+  }
+
+ 
+ async finalizar(ticketId: string) {
+    const ticket = await this.ticket.findByPk(ticketId);
+    if (!ticket) throw new Error('Ticket não encontrado');
+
+    return ticket.update({
+      status: StatusTicket.ATENDIDO,
+      data_finalizacao: new Date()
+    });
+  }
+
+  // 4. CANCELAR: Paciente desistiu
+  async cancelar(ticketId: string) {
+    const ticket = await this.ticket.findByPk(ticketId);
+    if (!ticket) throw new Error('Ticket não encontrado');
+
+    return ticket.update({
+      status: StatusTicket.CANCELADO,
+      data_finalizacao: new Date()
+    });
+  }
+
+  // 5. LISTAR TODOS (Para o Painel e Relatórios)
+  async listarTodos() {
+    return this.ticket.findAll({
+      order: [['data_emissao', 'DESC']], 
+      include: [this.paciente] 
+    });
+  }
+
+  // 6. DELETAR (Para admin limpar erros)
+  async deletar(id: string) {
+    const ticket = await this.ticket.findByPk(id);
+    if (ticket) await ticket.destroy();
+    return { message: 'Ticket removido' };
+  }
+
+
+  private async verificarFila(prio: Prioridade): Promise<boolean> {
+    const count = await this.ticket.count({
+      where: { status: StatusTicket.PENDENTE, prioridade: prio },
+    });
+    return count > 0;
+  }
 }
+  
+

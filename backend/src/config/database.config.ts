@@ -2,6 +2,7 @@ import { registerAs } from '@nestjs/config';
 import { SequelizeModuleOptions } from '@nestjs/sequelize';
 import { URL } from 'url';
 
+
 export default registerAs(
   'database',
   (): SequelizeModuleOptions => {

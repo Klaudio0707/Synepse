@@ -5,7 +5,7 @@ import { TicketEntidade } from 'src/ticket/entities/ticket.entity';
 export class UsuarioEntidade extends Model<UsuarioEntidade> {
   @PrimaryKey
   @Column({
-    type: DataType.UUID, // <--- O SEGREDO ESTÁ AQUI
+    type: DataType.UUID, 
     defaultValue: DataType.UUIDV4,
   })
   declare usuarioId: string;
@@ -23,7 +23,8 @@ export class UsuarioEntidade extends Model<UsuarioEntidade> {
     type: DataType.ENUM('ADMIN', 'ATENDENTE'),
     defaultValue: 'ATENDENTE'
   })
-  declare permissaoUsuario: string;
+
+  declare role: string;
 
   // Um atendente atende vários tickets
   @HasMany(() => TicketEntidade)
