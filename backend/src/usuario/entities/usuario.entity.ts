@@ -5,10 +5,10 @@ import { TicketEntidade } from 'src/ticket/entities/ticket.entity';
 export class UsuarioEntidade extends Model<UsuarioEntidade> {
   @PrimaryKey
   @Column({
-    type: DataType.UUID, // <--- O SEGREDO ESTÁ AQUI
+    type: DataType.UUID, 
     defaultValue: DataType.UUIDV4,
   })
-  declare id: string;
+  declare id?: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
   declare usuarioNome: string;
@@ -17,15 +17,15 @@ export class UsuarioEntidade extends Model<UsuarioEntidade> {
   declare usuarioEmail: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  declare usuarioSenha: string; // Em produção, isso seria hash
+  declare usuarioSenha: string; // Em produção, isso sera hash
 
   @Column({
     type: DataType.ENUM('ADMIN', 'ATENDENTE'),
     defaultValue: 'ATENDENTE'
   })
-  declare permissaoUsuario: string;
+  declare role?: string;
 
   // Um atendente atende vários tickets
   @HasMany(() => TicketEntidade)
-  declare ticketsAtendidos: TicketEntidade[];
+  declare ticketsAtendidos?: TicketEntidade[];
 }

@@ -21,15 +21,15 @@ export class TicketController {
   //   return this.ticketService.findAll();
   // }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
+  // @Get()
+  // findOne(@Param() id: string) {
   //   return this.ticketService.findOne(+id);
   // }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateTicketDto: UpdateTicketDto) {
-  //   return this.ticketService.update(+id, updateTicketDto);
-  // }
+  @Patch('chamar')
+  async chamarProximo(@Body('usuarioId') usuarioId: string) {
+    return this.ticketService.chamarProximoTicket(usuarioId);
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {
