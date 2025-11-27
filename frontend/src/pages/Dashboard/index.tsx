@@ -52,7 +52,7 @@ export function Dashboard() {
   };
 
   return (
-    <div style={{ padding: '40px', background: '#ecf0f1', minHeight: '100vh', fontFamily: 'sans-serif' }}>
+    <div style={{ padding: '40px', background: '#6597a3ff', minHeight: '100vh', fontFamily: 'sans-serif' }}>
       <h1 style={{ color: '#2c3e50', marginBottom: '30px' }}>Dashboard Gerencial</h1>
 
       {/* Cards Superiores */}
@@ -65,12 +65,12 @@ export function Dashboard() {
 
       {/* Gráficos (Barras Simples com CSS) */}
       <div style={{ background: 'white', padding: '30px', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#7f8c8d' }}>
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#0b0c0cff' }}>
           <BarChart /> Distribuição por Prioridade
         </h2>
         
         <div style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <Barra label="Prioritário (SP)" valor={stats.porPrioridade.SP} total={stats.total} cor="#e74c3c" />
+          <Barra label="Prioritário (SP)" valor={stats.porPrioridade.SP} total={stats.total} cor="#e74c3c" placeholder={stats.total} />
           <Barra label="Exames (SE)" valor={stats.porPrioridade.SE} total={stats.total} cor="#f1c40f" />
           <Barra label="Geral (SG)" valor={stats.porPrioridade.SG} total={stats.total} cor="#3498db" />
         </div>
@@ -87,7 +87,7 @@ const Card = ({ icone, titulo, valor, cor }: any) => (
     boxShadow: '0 4px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
   }}>
     <div>
-      <p style={{ margin: 0, color: '#95a5a6', fontSize: '0.9rem' }}>{titulo}</p>
+      <p style={{ margin: 0, color: '#22383aff', fontSize: '0.9rem' }}>{titulo}</p>
       <h2 style={{ margin: '5px 0 0 0', fontSize: '2.5rem', color: '#2c3e50' }}>{valor}</h2>
     </div>
     <div style={{ color: cor, transform: 'scale(1.5)', opacity: 0.8 }}>{icone}</div>
@@ -102,7 +102,7 @@ const Barra = ({ label, valor, total, cor }: any) => {
         <strong>{label}</strong>
         <span>{valor} ({porcentagem.toFixed(1)}%)</span>
       </div>
-      <div style={{ width: '100%', height: '15px', background: '#ecf0f1', borderRadius: '10px', overflow: 'hidden' }}>
+      <div style={{ width: '100%', height: '15px', background: '#dbdbdbff', borderRadius: '10px', overflow: 'hidden' }}>
         <div style={{ width: `${porcentagem}%`, height: '100%', background: cor, transition: 'width 1s ease-in-out' }} />
       </div>
     </div>
