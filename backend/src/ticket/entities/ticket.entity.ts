@@ -51,8 +51,8 @@ export class TicketEntidade extends Model<TicketEntidade> {
 
   @ForeignKey(() => UsuarioEntidade)
   @Column({ type: DataType.UUID, allowNull: true })
-  declare usuarioId?: string;
+  declare id?: string;
 
   @BelongsTo(() => UsuarioEntidade)
-  declare usuario?: UsuarioEntidade;
+  declare usuarioNome?: UsuarioEntidade;
 }

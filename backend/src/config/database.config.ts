@@ -31,6 +31,8 @@ export default registerAs(
 
       autoLoadModels: true,
       synchronize: process.env.NODE_ENV !== 'production',
+      // sync: { force: true },
+
       logging: false,
     };
   },

@@ -94,7 +94,7 @@ export class TicketService {
 
     return proximoTicket.update({
       status: StatusTicket.CHAMADO,
-      usuarioId: usuarioId,
+      id: usuarioId,
       data_chamada: new Date(),
     });
     

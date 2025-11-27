@@ -17,7 +17,7 @@ export class UsuarioEntidade extends Model<UsuarioEntidade> {
   declare usuarioEmail: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
-  declare usuarioSenha: string; // Em produção, isso seria hash
+  declare usuarioSenha: string; // Em produção, isso sera hash
 
   @Column({
     type: DataType.ENUM('ADMIN', 'ATENDENTE'),
@@ -28,5 +28,5 @@ export class UsuarioEntidade extends Model<UsuarioEntidade> {
 
   // Um atendente atende vários tickets
   @HasMany(() => TicketEntidade)
-  declare ticketsAtendidos: TicketEntidade[];
+  declare ticketsAtendidos?: TicketEntidade[];
 }

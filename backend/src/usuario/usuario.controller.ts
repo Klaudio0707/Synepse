@@ -17,19 +17,21 @@ export class UsuarioController {
     return this.usuarioService.findAll();
   }
 
-//   @Get(':id')
-//   findOne(@Param('id') id: string) {
-//     return this.usuarioService.findOne(+id);
-//   }
+  // Descomentado e corrigido (sem o + no id)
+  @Get(':id')
+  findOne(@Param('id') id: string) { 
+    return this.usuarioService.findOne(id);
+  }
 
-//   @Patch(':id')
-//   update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-//     return this.usuarioService.update(+id, updateUsuarioDto);
-//   }
+  // Descomentado e corrigido
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
+    return this.usuarioService.update(id, updateUsuarioDto);
+  }
 
-//   @Delete(':id')
-//   remove(@Param('id') id: string) {
-//     return this.usuarioService.remove(+id);
-//   }
-// 
+  // Descomentado e corrigido
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.usuarioService.remove(id);
+  }
 }
