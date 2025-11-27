@@ -94,12 +94,50 @@ export class TicketService {
 
     return proximoTicket.update({
       status: StatusTicket.CHAMADO,
-      usuarioId: usuarioId,
+      id: usuarioId,
       data_chamada: new Date(),
     });
+    
   }
 
  
+ async finalizar(ticketId: string) {
+    const ticket = await this.ticket.findByPk(ticketId);
+    if (!ticket) throw new Error('Ticket não encontrado');
+
+    return ticket.update({
+      status: StatusTicket.ATENDIDO,
+      data_finalizacao: new Date()
+    });
+  }
+
+  // 4. CANCELAR: Paciente desistiu
+  async cancelar(ticketId: string) {
+    const ticket = await this.ticket.findByPk(ticketId);
+    if (!ticket) throw new Error('Ticket não encontrado');
+
+    return ticket.update({
+      status: StatusTicket.CANCELADO,
+      data_finalizacao: new Date()
+    });
+  }
+
+  // 5. LISTAR TODOS (Para o Painel e Relatórios)
+  async listarTodos() {
+    return this.ticket.findAll({
+      order: [['data_emissao', 'DESC']], 
+      include: [this.paciente] 
+    });
+  }
+
+  // 6. DELETAR (Para admin limpar erros)
+  async deletar(id: string) {
+    const ticket = await this.ticket.findByPk(id);
+    if (ticket) await ticket.destroy();
+    return { message: 'Ticket removido' };
+  }
+
+
   private async verificarFila(prio: Prioridade): Promise<boolean> {
     const count = await this.ticket.count({
       where: { status: StatusTicket.PENDENTE, prioridade: prio },
@@ -107,3 +145,5 @@ export class TicketService {
     return count > 0;
   }
 }
+  
+

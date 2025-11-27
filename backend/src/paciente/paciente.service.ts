@@ -1,26 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePacienteDto } from './dto/create-paciente.dto';
-import { UpdatePacienteDto } from './dto/update-paciente.dto';
+import { InjectModel } from '@nestjs/sequelize';
+import { PacienteEntidade } from './entities/paciente.entity';
 
 @Injectable()
 export class PacienteService {
-  create(createPacienteDto: CreatePacienteDto) {
-    return 'This action adds a new paciente';
+  constructor(
+    @InjectModel(PacienteEntidade)
+    private pacienteModel: typeof PacienteEntidade,
+  ) {}
+
+  async findAll() {
+    return this.pacienteModel.findAll();
   }
 
-  findAll() {
-    return `This action returns all paciente`;
+  async findOne(id: string) {
+    return this.pacienteModel.findByPk(id);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} paciente`;
-  }
-
-  update(id: number, updatePacienteDto: UpdatePacienteDto) {
-    return `This action updates a #${id} paciente`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} paciente`;
+  // Permite atualizar Nome e CPF
+  async update(id: string, dados: { nome?: string; CPF?: string }) {
+    const paciente = await this.pacienteModel.findByPk(id);
+    if (!paciente) throw new Error('Paciente não encontrado');
+    
+    return paciente.update(dados);
   }
 }

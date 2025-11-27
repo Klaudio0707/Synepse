@@ -2,6 +2,7 @@ import { registerAs } from '@nestjs/config';
 import { SequelizeModuleOptions } from '@nestjs/sequelize';
 import { URL } from 'url';
 
+
 export default registerAs(
   'database',
   (): SequelizeModuleOptions => {
@@ -30,6 +31,8 @@ export default registerAs(
 
       autoLoadModels: true,
       synchronize: process.env.NODE_ENV !== 'production',
+      // sync: { force: true },
+
       logging: false,
     };
   },

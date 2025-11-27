@@ -8,7 +8,7 @@ export class UsuarioEntidade extends Model<UsuarioEntidade> {
     type: DataType.UUID, 
     defaultValue: DataType.UUIDV4,
   })
-  declare id?: string;
+  declare usuarioId: string;
 
   @Column({ type: DataType.STRING, allowNull: false })
   declare usuarioNome: string;
@@ -23,7 +23,8 @@ export class UsuarioEntidade extends Model<UsuarioEntidade> {
     type: DataType.ENUM('ADMIN', 'ATENDENTE'),
     defaultValue: 'ATENDENTE'
   })
-  declare role?: string;
+
+  declare role: string;
 
   // Um atendente atende vários tickets
   @HasMany(() => TicketEntidade)

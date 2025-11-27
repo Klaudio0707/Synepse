@@ -15,24 +15,27 @@ export class TicketController {
   ) {
     return this.ticketService.criarSenha(prioridade, nome, cpf);
   }
+  @Get()
+  listar() {
+    return this.ticketService.listarTodos();
+  }
 
-  // @Get()
-  // findAll() {
-  //   return this.ticketService.findAll();
-  // }
-
-  // @Get()
-  // findOne(@Param() id: string) {
-  //   return this.ticketService.findOne(+id);
-  // }
-
+  @Patch(':id/finalizar')
+  finalizar(@Param('id') id: string) {
+    return this.ticketService.finalizar(id);
+  }
   @Patch('chamar')
   async chamarProximo(@Body('usuarioId') usuarioId: string) {
     return this.ticketService.chamarProximoTicket(usuarioId);
   }
+  @Patch(':id/cancelar')
+  cancelar(@Param('id') id: string) {
+    return this.ticketService.cancelar(id);
+  }
 
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.ticketService.remove(+id);
-  // }
+
+  @Delete(':id')
+  deletar(@Param('id') id: string) {
+    return this.ticketService.deletar(id);
+  }
 }
