@@ -1,4 +1,3 @@
-
 import { Column, DataType, HasMany, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { TicketEntidade } from "src/ticket/entities/ticket.entity";
 
