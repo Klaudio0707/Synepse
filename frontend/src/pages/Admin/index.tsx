@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { api } from '../../services/api';
 import { Megaphone, CheckCircle, XCircle, User, LogIn, RefreshCw } from 'lucide-react';
 import useToast from '../../components/UseToaster';
+import type { TicketResponse } from '../../types/ITicketResponse';
 
 interface Ticket {
   ticketId: string;
@@ -66,7 +67,20 @@ export function Admin() {
      
     }
   };
+  const exibirErro = (erro: any) => {
+    // Tenta pegar a mensagem específica que veio do Backend
+    const msgBackend = erro.response?.data?.message;
+    
+    // Mensagem padrão caso o servidor não responda
+    let msgFinal = "Erro de conexão. Verifique se o backend está rodando.";
 
+    if (msgBackend) {
+      // Se o NestJS mandou uma lista de erros, pega o primeiro
+      msgFinal = Array.isArray(msgBackend) ? msgBackend[0] : msgBackend;
+    }
+
+    useToast(msgFinal, 'error');
+  };
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -83,13 +97,7 @@ export function Admin() {
        useToast('Email ou senha inválidos', 'warning');
       }
     } catch (error) {
-      
-      const mensagemBackend = error;
-      const mensagemFinal = mensagemBackend || "Erro ao chamar. Verifique a conexão.";
-      useToast(
-        Array.isArray(mensagemFinal) ? mensagemFinal[0] : mensagemFinal, 
-        'warning'
-      );
+      exibirErro(error);
     }
   };
 
@@ -108,17 +116,7 @@ export function Admin() {
       });
       setTicketAtual(response.data);
     } catch (error: any) {
-   
-      const mensagemBackend = error.response?.data?.message;
-      
-      // 2. Se não tiver mensagem no Backend, usa uma genérica
-      const mensagemFinal = mensagemBackend || "Erro ao chamar. Verifique a conexão.";
-
-      // 3. Exibe no Toast (Se a mensagem for um Array, pega a primeira linha)
-      useToast(
-        Array.isArray(mensagemFinal) ? mensagemFinal[0] : mensagemFinal, 
-        'warning'
-      );
+      exibirErro(error);
     } finally {
       setLoading(false);
     }
@@ -129,9 +127,10 @@ export function Admin() {
     try {
       await api.patch(`/ticket/${ticketAtual.ticketId}/finalizar`);
       setTicketAtual(null);
-      alert("Atendimento finalizado!");
+      useToast('Atendimento finalizado com sucesso!', 'success');
     } catch (error) {
-      alert("Erro ao finalizar.");
+      exibirErro(error);
+     
     }
   };
 
@@ -142,7 +141,7 @@ export function Admin() {
         await api.patch(`/ticket/${ticketAtual.ticketId}/cancelar`);
         setTicketAtual(null);
     } catch (error) {
-      alert("Erro ao cancelar.");
+      exibirErro(error);
     }
   };
 
