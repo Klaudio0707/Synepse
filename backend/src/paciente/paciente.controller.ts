@@ -6,13 +6,13 @@ import { UpdatePacienteDto } from './dto/update-paciente.dto';
 export class PacienteController {
   constructor(private readonly pacienteService: PacienteService) {}
 
-  @Get()
-  listar() {
-    return this.pacienteService.findAll();
+   @Patch(':id') 
+  atualizar(@Param('id') id: string, @Body() dados: UpdatePacienteDto) {
+    return this.pacienteService.update(id, dados);
   }
 
-@Patch(':id')
-  atualizar(@Param('id') id: string, @Body() updatePacienteDto: UpdatePacienteDto) { // Use o DTO
-    return this.pacienteService.update(id, updatePacienteDto);
+  @Get(':id')
+  buscar(@Param('id') id: string) {
+    return this.pacienteService.findOne(id);
   }
 }

@@ -27,19 +27,13 @@ export class UsuarioService {
     return this.usuarioModel.findByPk(id);
   }
 
-  async update(id: string, updateUsuarioDto: UpdateUsuarioDto) {
-
-    const [affectedCount] = await this.usuarioModel.update(updateUsuarioDto, {
-      where: { id },
-    });
+  async update(id: string, dados: any) {
+    const usuario = await this.usuarioModel.findByPk(id);
+    if (!usuario) throw new Error('Usuário não encontrado');
     
-    if (affectedCount === 0) {
-      return { message: 'Usuário não encontrado ou nada mudou' };
-    }
-    
-    return this.findOne(id);
+    // Atualiza apenas o que foi enviado
+    return usuario.update(dados);
   }
-
   
   async remove(id: string) {
     const usuario = await this.usuarioModel.findByPk(id);

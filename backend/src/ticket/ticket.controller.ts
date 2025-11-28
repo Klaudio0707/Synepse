@@ -24,8 +24,15 @@ export class TicketController {
   finalizar(@Param('id') id: string) {
     return this.ticketService.finalizar(id);
   }
-  @Patch('chamar')
-  async chamarProximo(@Body('usuarioId') usuarioId: string) {
+@Patch('chamar')
+  chamar(@Body('usuarioId') usuarioId: string) {
+    // Adicionei este log para você ver no terminal preto se o ID está chegando
+    console.log('👨‍⚕️ Médico chamando senha. ID recebido:', usuarioId);
+    
+    if (!usuarioId) {
+        console.warn('⚠️ ALERTA: ID do usuário veio vazio!');
+    }
+
     return this.ticketService.chamarProximoTicket(usuarioId);
   }
   @Patch(':id/cancelar')

@@ -1,110 +1,133 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../services/api';
-import { PieChart, BarChart, Users, XCircle, CheckCircle } from 'lucide-react';
+import { PieChart, Clock, Users, FileText, Download } from 'lucide-react';
 
 interface Ticket {
-  ticketId: string;
+  id: string; // ou ticketId, dependendo do seu banco atual
   codigo: string;
   prioridade: string;
-  status: 'PENDENTE' | 'CHAMADO' | 'ATENDIDO' | 'CANCELADO';
+  status: string;
+  data_emissao: string;
+  data_chamada?: string;
+  data_finalizacao?: string;
+ usuario?: { 
+    usuarioNome: string; 
+  }; 
 }
 
 export function Dashboard() {
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [stats, setStats] = useState({
     total: 0,
-    pendentes: 0,
-    atendidos: 0,
-    cancelados: 0,
-    porPrioridade: { SP: 0, SE: 0, SG: 0 }
+    tmGeral: 0, // Tempo Médio Geral (minutos)
+    tmSP: 0,
+    tmSE: 0,
+    tmSG: 0
   });
 
   useEffect(() => {
     carregarDados();
-    // Atualiza a cada 5 segundos para parecer "Tempo Real"
-    const interval = setInterval(carregarDados, 5000); 
-    return () => clearInterval(interval);
   }, []);
 
   const carregarDados = async () => {
     try {
       const response = await api.get('/ticket');
-      const tickets: Ticket[] = response.data;
+      const dados: Ticket[] = response.data;
+      setTickets(dados);
+      calcularMetricas(dados);
+      console.log(dados);
+    } catch (error) { console.error("Erro ao carregar dashboard"); }
+  };
 
-      // Cálculos Matemáticos
-      const pendentes = tickets.filter(t => t.status === 'PENDENTE').length;
-      const atendidos = tickets.filter(t => t.status === 'ATENDIDO').length;
-      const cancelados = tickets.filter(t => t.status === 'CANCELADO').length; // Inclui descartados
-      
-      const sp = tickets.filter(t => t.prioridade === 'SP').length;
-      const se = tickets.filter(t => t.prioridade === 'SE').length;
-      const sg = tickets.filter(t => t.prioridade === 'SG').length;
+  const calcularMetricas = (dados: Ticket[]) => {
+    // Filtra apenas os finalizados para cálculo de tempo
+    const atendidos = dados.filter(t => t.status === 'ATENDIDO' && t.data_chamada && t.data_finalizacao);
+    
+    const calcularTM = (lista: Ticket[]) => {
+      if (lista.length === 0) return 0;
+      const totalMinutos = lista.reduce((acc, t) => {
+        const inicio = new Date(t.data_chamada!).getTime();
+        const fim = new Date(t.data_finalizacao!).getTime();
+        return acc + (fim - inicio);
+      }, 0);
+      return Math.round((totalMinutos / lista.length) / 60000); // Ms -> Minutos
+    };
 
-      setStats({
-        total: tickets.length,
-        pendentes,
-        atendidos,
-        cancelados,
-        porPrioridade: { SP: sp, SE: se, SG: sg }
-      });
-    } catch (error) {
-      console.error("Erro ao carregar dashboard");
-    }
+    setStats({
+      total: dados.length,
+      tmGeral: calcularTM(atendidos),
+      tmSP: calcularTM(atendidos.filter(t => t.prioridade === 'SP')),
+      tmSE: calcularTM(atendidos.filter(t => t.prioridade === 'SE')),
+      tmSG: calcularTM(atendidos.filter(t => t.prioridade === 'SG')),
+    });
   };
 
   return (
-    <div style={{ padding: '40px', background: '#6597a3ff', minHeight: '100vh', fontFamily: 'sans-serif' }}>
-      <h1 style={{ color: '#2c3e50', marginBottom: '30px' }}>Dashboard Gerencial</h1>
+    <div style={{ padding: '40px', background: '#ecf0f1', minHeight: '100vh', fontFamily: 'sans-serif' }}>
+      <h1 style={{ color: '#2c3e50', marginBottom: '30px' }}>Relatórios Gerenciais</h1>
 
-      {/* Cards Superiores */}
+      {/* Cards de Tempo Médio (TM) */}
       <div style={{ display: 'flex', gap: '20px', marginBottom: '40px', flexWrap: 'wrap' }}>
-        <Card icone={<Users />} titulo="Total Emitido" valor={stats.total} cor="#34495e" />
-        <Card icone={<PieChart />} titulo="Na Fila (Pendentes)" valor={stats.pendentes} cor="#f39c12" />
-        <Card icone={<CheckCircle />} titulo="Atendidos" valor={stats.atendidos} cor="#27ae60" />
-        <Card icone={<XCircle />} titulo="Cancelados" valor={stats.cancelados} cor="#c0392b" />
+        <Card icone={<Users />} titulo="Total de Senhas" valor={stats.total} cor="#34495e" />
+        <Card icone={<Clock />} titulo="TM Geral" valor={`${stats.tmGeral} min`} cor="#27ae60" />
+        <Card icone={<Clock />} titulo="TM Prioritário" valor={`${stats.tmSP} min`} cor="#e74c3c" />
+        <Card icone={<Clock />} titulo="TM Exames" valor={`${stats.tmSE} min`} cor="#f1c40f" />
       </div>
 
-      {/* Gráficos (Barras Simples com CSS) */}
+      {/* Tabela Detalhada (Exigência do PDF) */}
       <div style={{ background: 'white', padding: '30px', borderRadius: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
-        <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#0b0c0cff' }}>
-          <BarChart /> Distribuição por Prioridade
+        <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#7f8c8d', marginBottom: '20px' }}>
+          <FileText /> Relatório Detalhado de Atendimentos
         </h2>
         
-        <div style={{ marginTop: '30px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <Barra label="Prioritário (SP)" valor={stats.porPrioridade.SP} total={stats.total} cor="#e74c3c" placeholder={stats.total} />
-          <Barra label="Exames (SE)" valor={stats.porPrioridade.SE} total={stats.total} cor="#f1c40f" />
-          <Barra label="Geral (SG)" valor={stats.porPrioridade.SG} total={stats.total} cor="#3498db" />
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <thead>
+              <tr style={{ background: '#f8f9fa', color: '#2c3e50' }}>
+                <th style={thStyle}>Senha</th>
+                <th style={thStyle}>Tipo</th>
+                <th style={thStyle}>Status</th>
+                <th style={thStyle}>Emissão</th>
+                <th style={thStyle}>Chamada</th>
+                <th style={thStyle}>Atendente</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tickets.map(t => (
+                <tr key={t.id} style={{ borderBottom: '1px solid #221c1cff', color: '#030303ff'}}>
+                  <td style={tdStyle}><strong>{t.codigo}</strong></td>
+                  <td style={tdStyle}>{t.prioridade}</td>
+                  <td style={tdStyle}>
+                    <span style={{ 
+                      padding: '5px 10px', borderRadius: '15px', fontSize: '0.8rem',
+                      background: t.status === 'ATENDIDO' ? '#24eb52ff' : t.status === 'CANCELADO' ? '#d3717aff' : '#fff3cd',
+                      color: t.status === 'ATENDIDO' ? '#155724' : t.status === 'CANCELADO' ? '#721c24' : '#856404'
+                    }}>
+                      {t.status}
+                    </span>
+                  </td>
+                  <td style={tdStyle}>{new Date(t.data_emissao).toLocaleTimeString()}</td>
+                  <td style={tdStyle}>{t.data_chamada ? new Date(t.data_chamada).toLocaleTimeString() : '-'}</td>
+                  <td style={tdStyle}>{t.usuario?.usuarioNome || '-'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
   );
 }
 
-// Componentes Auxiliares
+const thStyle = { padding: '15px', borderBottom: '2px solid #ddd' };
+const tdStyle = { padding: '15px' };
+
 const Card = ({ icone, titulo, valor, cor }: any) => (
-  <div style={{ 
-    flex: 1, minWidth: '200px', background: 'white', padding: '25px', 
-    borderRadius: '15px', borderLeft: `5px solid ${cor}`,
-    boxShadow: '0 4px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between'
-  }}>
+  <div style={{ flex: 1, minWidth: '200px', background: 'white', padding: '25px', borderRadius: '15px', borderLeft: `5px solid ${cor}`, boxShadow: '0 4px 10px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
     <div>
-      <p style={{ margin: 0, color: '#22383aff', fontSize: '0.9rem' }}>{titulo}</p>
+      <p style={{ margin: 0, color: '#95a5a6', fontSize: '0.9rem' }}>{titulo}</p>
       <h2 style={{ margin: '5px 0 0 0', fontSize: '2.5rem', color: '#2c3e50' }}>{valor}</h2>
     </div>
     <div style={{ color: cor, transform: 'scale(1.5)', opacity: 0.8 }}>{icone}</div>
   </div>
 );
-
-const Barra = ({ label, valor, total, cor }: any) => {
-  const porcentagem = total > 0 ? (valor / total) * 100 : 0;
-  return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px' }}>
-        <strong>{label}</strong>
-        <span>{valor} ({porcentagem.toFixed(1)}%)</span>
-      </div>
-      <div style={{ width: '100%', height: '15px', background: '#dbdbdbff', borderRadius: '10px', overflow: 'hidden' }}>
-        <div style={{ width: `${porcentagem}%`, height: '100%', background: cor, transition: 'width 1s ease-in-out' }} />
-      </div>
-    </div>
-  );
-};

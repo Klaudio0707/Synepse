@@ -25,8 +25,8 @@ export class UsuarioController {
 
   // Descomentado e corrigido
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUsuarioDto: UpdateUsuarioDto) {
-    return this.usuarioService.update(id, updateUsuarioDto);
+  update(@Param('id') id: string, @Body() dados: any) {
+    return this.usuarioService.update(id, dados);
   }
 
   // Descomentado e corrigido

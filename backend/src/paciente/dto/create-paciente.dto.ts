@@ -1,11 +1,19 @@
 import { IsOptional, IsString } from "class-validator";
 
 export class CreatePacienteDto {
-    @IsString()
+  @IsString()
   @IsOptional()
   nome?: string;
 
   @IsString()
   @IsOptional()
   CPF?: string;
+
+  @IsString()
+  @IsOptional()
+  telefone?: string;
+
+  @IsString()
+  @IsOptional()
+  cep?: string;
 }

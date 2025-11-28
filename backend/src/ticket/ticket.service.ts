@@ -5,7 +5,7 @@ import { Op } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
 import { Prioridade, StatusTicket, TicketEntidade } from './entities/ticket.entity';
 import { PacienteEntidade } from 'src/paciente/entities/paciente.entity';
-
+import { UsuarioEntidade } from 'src/usuario/entities/usuario.entity';
 @Injectable()
 export class TicketService {
   constructor(
@@ -13,6 +13,8 @@ export class TicketService {
     private ticket: typeof TicketEntidade,
     @InjectModel(PacienteEntidade)
     private paciente: typeof PacienteEntidade,
+    @InjectModel(UsuarioEntidade)
+    private usuario: typeof UsuarioEntidade,
   ) { }
 
   async criarSenha(tipo: Prioridade, nomePaciente?: string, pacienteCPF?: string) {
@@ -92,9 +94,9 @@ export class TicketService {
       throw new NotFoundException('Não há senhas na fila para atendimento.');
     }
 
-    return proximoTicket.update({
+   return proximoTicket.update({
       status: StatusTicket.CHAMADO,
-      id: usuarioId,
+      usuarioId: usuarioId, // AQUI: Atualiza a coluna usuarioId, NÃO o id do ticket
       data_chamada: new Date(),
     });
     
@@ -103,7 +105,7 @@ export class TicketService {
  
  async finalizar(ticketId: string) {
     const ticket = await this.ticket.findByPk(ticketId);
-    if (!ticket) throw new Error('Ticket não encontrado');
+  if (!ticket) throw new NotFoundException('Ticket não encontrado');
 
     return ticket.update({
       status: StatusTicket.ATENDIDO,
@@ -125,11 +127,17 @@ export class TicketService {
   // 5. LISTAR TODOS (Para o Painel e Relatórios)
   async listarTodos() {
     return this.ticket.findAll({
-      order: [['data_emissao', 'DESC']], 
-      include: [this.paciente] 
+      order: [['data_emissao', 'DESC']],
+      include: [
+        this.paciente,
+        {
+          model: this.usuario,
+          as: 'usuario', // Garante que o campo se chame 'usuario'
+          attributes: ['usuarioNome', 'usuarioEmail'] // <--- FILTRO: Traz só o nome e email. Senha fica oculta!
+        }
+      ],
     });
   }
-
   // 6. DELETAR (Para admin limpar erros)
   async deletar(id: string) {
     const ticket = await this.ticket.findByPk(id);
