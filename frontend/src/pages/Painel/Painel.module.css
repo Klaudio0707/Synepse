@@ -1,0 +1,146 @@
+.container {
+  display: flex;
+  height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #2c3e50;
+  color: white;
+  overflow: hidden;
+}
+
+/* --- Lado Esquerdo (Senha Principal) --- */
+.mainArea {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-right: 4px solid #34495e;
+  background: radial-gradient(circle, #34495e 0%, #2c3e50 100%);
+}
+
+.mainTitle {
+  font-size: 3rem;
+  margin: 0;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #bdc3c7;
+  font-weight: 300;
+}
+
+.senhaGigante {
+  font-size: 5rem;
+  margin: 20px 0;
+  font-weight: bold;
+  text-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+  line-height: 1;
+}
+
+.subInfo {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-top: 10px;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px 40px;
+  border-radius: 50px;
+}
+
+.aguardando {
+  color: #7f8c8d;
+  font-size: 3rem;
+  font-weight: 300;
+  animation: pulso 2s infinite;
+}
+
+.guicheBadge {
+  background: white;
+  color: #2c3e50;
+  padding: 10px 40px;
+  border-radius: 50px;
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.guicheTitle {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.guicheSub {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+/* --- Lado Direito (Histórico) --- */
+.sidebar {
+  flex: 1;
+  background: #34495e;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+}
+
+.sidebarHeader {
+  border-bottom: 2px solid #7f8c8d;
+  padding-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 2rem;
+  color: #ecf0f1;
+}
+
+.historyList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.historyItem {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.historyItem:first-child {
+  background: rgba(255, 255, 255, 0.1); /* Destaque para o último chamado */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.historyCode {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.historyTime {
+  display: block;
+  font-size: 1rem;
+  color: #bdc3c7;
+  text-align: right;
+}
+
+.historyStatus {
+  font-size: 0.8rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Animações */
+@keyframes pulso {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}

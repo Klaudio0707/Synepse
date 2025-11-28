@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { api } from '../../services/api';
 import { Megaphone, CheckCircle, XCircle, User, LogIn, RefreshCw, Edit2, Save, Trash2 } from 'lucide-react';
 import useToast from '../../components/UseToaster'; 
+import styles from './Admin.module.css';
 
 interface Ticket {
   ticketId: string; // Padrão do Backend atualizado
@@ -33,7 +34,7 @@ export function Admin() {
   const [ticketAtual, setTicketAtual] = useState<Ticket | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // --- ESTADOS DO FORMULÁRIO (QUE ESTAVAM FALTANDO) ---
+  // --- ESTADOS DO FORMULÁRIO 
   const [editando, setEditando] = useState(false);
   const [nome, setNome] = useState("");
   const [cpf, setCpf] = useState("");
@@ -112,14 +113,14 @@ const chamarProximo = async () => {
     if (!usuarioLogado) return;
     setLoading(true);
     
-    // --- DEBUG: ADICIONE ISSO ---
-    console.log("DADOS DO USUÁRIO LOGADO:", usuarioLogado);
-    console.log("ID QUE ESTOU TENTANDO ENVIAR:", usuarioLogado.usuarioId);
-    // ----------------------------
+
+    // console.log("DADOS DO USUÁRIO LOGADO:", usuarioLogado);
+    // console.log("ID QUE ESTOU TENTANDO ENVIAR:", usuarioLogado.usuarioId);
+    // // ----------------------------
 
     try {
       const response = await api.patch('/ticket/chamar', {
-        usuarioId: usuarioLogado.usuarioId // Verifica se isso aqui não está undefined no console
+        usuarioId: usuarioLogado.usuarioId 
       });
       setTicketAtual(response.data);
       setEditando(true);
@@ -174,100 +175,129 @@ const chamarProximo = async () => {
 
   if (!usuarioLogado) {
     return (
-      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#2c3e50' }}>
-        <form onSubmit={handleLogin} style={{ background: 'white', padding: '40px', borderRadius: '10px', width: '300px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-          <h2 style={{ textAlign: 'center', color: '#333' }}>Acesso Restrito</h2>
-          <input placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} required />
-          <input type="password" placeholder="Senha" value={senha} onChange={e => setSenha(e.target.value)} style={inputStyle} required />
-          <button type="submit" style={btnStyle('#2980b9')}>Entrar</button>
-          <Link to="/cadastro" style={{ textAlign: 'center', color: '#7f8c8d', fontSize: '0.9rem' }}>Criar conta</Link>
+     <div className={styles.loginContainer}>
+        <form onSubmit={handleLogin} className={styles.loginForm}>
+          <h2 className={styles.loginTitle}>Acesso Restrito</h2>
+          
+          <input 
+            placeholder="Email" 
+            value={email} 
+            onChange={e => setEmail(e.target.value)} 
+            className={styles.input} 
+            required 
+          />
+          <input 
+            type="password" 
+            placeholder="Senha" 
+            value={senha} 
+            onChange={e => setSenha(e.target.value)} 
+            className={styles.input} 
+            required 
+          />
+          
+          <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
+            <LogIn size={20} /> Entrar
+          </button>
+          
+          <Link to="/cadastro" className={styles.loginLink}>
+            Não tem conta? Cadastre-se
+          </Link>
         </form>
       </div>
     );
   }
 
+
   return (
-    <div style={{ padding: '40px', background: '#ecf0f1', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div className={styles.container}>
       
-      <div style={{ width: '100%', maxWidth: '600px', display: 'flex', justifyContent: 'space-between', marginBottom: '30px' }}>
-        <h1 style={{ margin: 0, color: '#2c3e50' }}>Atendimento</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <strong>{usuarioLogado.usuarioNome}</strong>
-          <button onClick={handleLogout} style={{ ...btnStyle('#7f8c8d'), padding: '5px 10px', fontSize: '0.8rem' }}>Sair</button>
+      <div className={styles.header}>
+        <h1 className={styles.headerTitle}>Atendimento</h1>
+        <div className={styles.userInfo}>
+          <span>Olá, {usuarioLogado.usuarioNome}</span>
+          <button onClick={handleLogout} className={`${styles.btn} ${styles.btnSecondary}`} style={{ padding: '5px 15px', fontSize: '0.9rem' }}>
+            Sair
+          </button>
         </div>
       </div>
 
-      <div style={{ background: 'white', padding: '40px', borderRadius: '20px', width: '100%', maxWidth: '600px', textAlign: 'center', boxShadow: '0 4px 20px rgba(0,0,0,0.1)' }}>
+      <div className={styles.card}>
         
         {ticketAtual ? (
           <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-              <span style={{ color: '#121313ff', textTransform: 'uppercase', fontSize: '0.9rem' }}>Senha Chamada</span>
-              <button onClick={excluirTicket} title="Excluir" style={{ background: 'transparent', border: 'none', color: '#c0392b', cursor: 'pointer' }}><Trash2 size={20}/></button>
+            <div className={styles.cardHeader}>
+              <span className={styles.labelSenha}>Senha Chamada</span>
+              <button onClick={excluirTicket} className={styles.btnIcon} title="Excluir Ticket">
+                <Trash2 size={20} color="#c0392b"/>
+              </button>
             </div>
 
-            <h1 style={{ fontSize: '5rem', margin: '10px 0', color: '#2980b9' }}>{ticketAtual.codigo}</h1>
+            <h1 className={styles.ticketCode}>{ticketAtual.codigo}</h1>
             
-            {/* --- ÁREA DO FORMULÁRIO (AGORA ESTÁ AQUI!) --- */}
-            <div style={{ background: '#d4d6d8ff', padding: '20px', borderRadius: '15px', marginBottom: '20px', textAlign: 'left' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                <h3 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}><User size={20}/> Dados do Paciente</h3>
-                {!editando && <button onClick={() => setEditando(true)} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#f39c12' }}><Edit2 size={18}/></button>}
+            {/* Área do Formulário */}
+            <div className={styles.formArea}>
+              <div className={styles.formHeader}>
+                <h3><User size={20}/> Dados do Paciente</h3>
+                {!editando && (
+                  <button onClick={() => setEditando(true)} className={styles.btnIcon} title="Editar">
+                    <Edit2 size={18} color="#f39c12"/>
+                  </button>
+                )}
               </div>
 
               {editando ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <input placeholder="Nome Completo" value={nome} onChange={e => setNome(e.target.value)} style={inputStyle} />
-                  <div style={{ display: 'flex', gap: '10px' }}>
-                    <input placeholder="CPF" value={cpf} onChange={e => setCpf(e.target.value)} style={{ flex: 1, ...inputStyle, marginTop: 0 }} />
-                    <input placeholder="Telefone" value={telefone} onChange={e => setTelefone(e.target.value)} style={{ flex: 1, ...inputStyle, marginTop: 0 }} />
+                <div className={styles.formGroup}>
+                  <input placeholder="Nome Completo" value={nome} onChange={e => setNome(e.target.value)} className={styles.input} />
+                  <div className={styles.row}>
+                    <input placeholder="CPF" value={cpf} onChange={e => setCpf(e.target.value)} className={styles.input} />
+                    <input placeholder="Telefone" value={telefone} onChange={e => setTelefone(e.target.value)} className={styles.input} />
                   </div>
-                  <input placeholder="CEP" value={cep} onChange={e => setCep(e.target.value)} style={inputStyle} />
+                  <input placeholder="CEP" value={cep} onChange={e => setCep(e.target.value)} className={styles.input} />
                   
-                  <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                    <button onClick={salvarPaciente} style={{ ...btnStyle('#27ae60'), flex: 1 }}>Salvar Dados</button>
-                    <button onClick={() => setEditando(false)} style={{ ...btnStyle('#95a5a6'), width: 'auto' }}>Cancelar Edição</button>
+                  <div className={styles.btnGroup}>
+                    <button onClick={salvarPaciente} className={`${styles.btn} ${styles.btnSuccess}`}>Salvar</button>
+                    <button onClick={() => setEditando(false)} className={`${styles.btn} ${styles.btnSecondary}`}>Cancelar</button>
                   </div>
                 </div>
               ) : (
                 <div>
-                  <p style={{ margin: '5px 0' }}><strong>Nome:</strong> {ticketAtual.paciente?.nome}</p>
-                  <p style={{ margin: '5px 0' }}><strong>CPF:</strong> {ticketAtual.paciente?.CPF || '-'}</p>
-                  <p style={{ margin: '5px 0' }}><strong>Tel:</strong> {ticketAtual.paciente?.telefone || '-'}</p>
+                  <p><strong>Nome:</strong> {ticketAtual.paciente?.nome}</p>
+                  <p><strong>CPF:</strong> {ticketAtual.paciente?.CPF || '-'}</p>
+                  <p><strong>Tel:</strong> {ticketAtual.paciente?.telefone || '-'}</p>
                 </div>
               )}
             </div>
-            {/* ------------------------------------------- */}
 
-            <div style={{ display: 'flex', gap: '15px', justifyContent: 'center' }}>
-              <button onClick={finalizar} style={{ ...btnStyle('#27ae60'), fontSize: '1.1rem', padding: '15px 30px' }}>
-                <CheckCircle size={24} style={{ marginRight: '10px' }} /> Finalizar
+            <div className={styles.actionButtons}>
+              <button onClick={finalizar} className={`${styles.btn} ${styles.btnSuccess}`} style={{ padding: '15px 30px' }}>
+                <CheckCircle size={24} /> Finalizar
               </button>
-              <button onClick={cancelar} style={{ ...btnStyle('#c0392b'), fontSize: '1.1rem', padding: '15px 30px' }}>
-                <XCircle size={24} style={{ marginRight: '10px' }} /> Ausente
+              <button onClick={cancelar} className={`${styles.btn} ${styles.btnDanger}`} style={{ padding: '15px 30px' }}>
+                <XCircle size={24} /> Ausente
               </button>
             </div>
           </>
         ) : (
-          <div style={{ padding: '40px 0' }}>
-            <h2 style={{ color: '#bdc3c7', marginBottom: '30px' }}>Nenhum paciente na mesa</h2>
-            <button onClick={chamarProximo} disabled={loading} style={{ ...btnStyle('#2980b9'), fontSize: '1.2rem', padding: '20px 40px', opacity: loading ? 0.7 : 1 }}>
-              <Megaphone size={28} style={{ marginRight: '10px' }} /> 
+          <div className={styles.emptyState}>
+            <h2 className={styles.emptyTitle}>Nenhum paciente na mesa</h2>
+            
+            <button 
+              onClick={chamarProximo} 
+              disabled={loading} 
+              className={`${styles.btn} ${styles.btnPrimary} ${styles.btnBig}`}
+            >
+              <Megaphone size={28} /> 
               {loading ? "Buscando..." : "CHAMAR PRÓXIMO"}
             </button>
             
-            <div style={{ marginTop: '20px' }}>
-               <button onClick={recuperarAtendimentoPreso} style={{ background: 'transparent', border: 'none', color: '#95a5a6', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '5px', margin: '0 auto' }}>
+            <div className={styles.refreshArea}>
+               <button onClick={recuperarAtendimentoPreso} className={styles.btnRefresh}>
                  <RefreshCw size={16} /> Verificar pendências
                </button>
             </div>
           </div>
         )}
-
       </div>
     </div>
   );
 }
-
-const inputStyle = { width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #bdc3c7', fontSize: '1rem', boxSizing: 'border-box' as const, marginTop: '5px' };
-const btnStyle = (bg: string) => ({ background: bg, color: 'white', border: 'none', padding: '12px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' as const, display: 'flex', alignItems: 'center', justifyContent: 'center', transition: '0.2s' });

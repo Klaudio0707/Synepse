@@ -3,7 +3,7 @@ import { api } from '../../services/api';
 import { Monitor } from 'lucide-react';
 import type { Ticket } from '../../types/ITicket';
 import useToast from '../../components/UseToaster';
-
+import styles from './Painel.module.css';
 
 export function Painel() {
   const [chamadas, setChamadas] = useState<Ticket[]>([]);
@@ -12,21 +12,23 @@ export function Painel() {
   // Função que busca os dados
   const atualizarPainel = async () => {
     try {
-      const response = await api.get('/ticket'); // Traz todos
+      const response = await api.get('/ticket'); 
       const todos: Ticket[] = response.data;
 
       // Filtra só quem foi CHAMADO
-      const chamados = todos.filter(t => t.status === 'CHAMADO');
+     const chamados = todos.filter(t => 
+        (t.status === 'CHAMADO' || t.status === 'ATENDIDO') && t.data_chamada
+      );
 
-      // Ordena pela data da chamada (Mais recente primeiro)
+      // Ordena: Mais recente primeiro (quem foi chamado agora fica no topo)
       chamados.sort((a, b) => new Date(b.data_chamada).getTime() - new Date(a.data_chamada).getTime());
 
-      // Pega os 5 últimos
-      const ultimos5 = chamados.slice(0, 5);
-
-      setChamadas(ultimos5);
-      if (ultimos5.length > 0) {
-        setSenhaPrincipal(ultimos5[0]); // A primeira da lista é a principal
+      // A senha principal é a primeira da lista (a mais recente)
+      if (chamados.length > 0) {
+        setSenhaPrincipal(chamados[0]);
+        
+        // As próximas 4 senhas vão para o histórico lateral
+        setChamadas(chamados.slice(1, 5));  // A primeira da lista é a principal
       }
     } catch (error) {
       useToast('Erro ao buscar senhas.\n'+error, 'error');
@@ -52,55 +54,71 @@ export function Painel() {
   };
 
   return (
-    <div style={{ display: 'flex', height: '100vh', fontFamily: 'sans-serif', background: '#2c3e50', color: 'white' }}>
+   <div className={styles.container}>
       
-      {/* Lado Esquerdo: A Senha da Vez (Gigante) */}
-      <div style={{ flex: 2, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: '2px solid #555' }}>
+      {/* --- Lado Esquerdo: A Senha da Vez (Gigante) --- */}
+      <div className={styles.mainArea}>
         {senhaPrincipal ? (
           <>
-            <h2 style={{ fontSize: '3rem', margin: 0 }}>SENHA ATUAL</h2>
-            <h1 style={{ 
-              fontSize: '10rem', 
-              margin: '20px 0', 
-              color: getCor(senhaPrincipal.prioridade),
-              textShadow: '0 0 20px rgba(0,0,0,0.5)'
-            }}>
+            <h2 className={styles.mainTitle}>SENHA ATUAL</h2>
+            
+            <h1 
+              className={styles.senhaGigante} 
+              style={{ color: getCor(senhaPrincipal.prioridade) }}
+            >
               {senhaPrincipal.codigo}
             </h1>
-            <h3 style={{ fontSize: '2rem' }}>
+            
+            <div 
+              className={styles.subInfo}
+              style={{ color: getCor(senhaPrincipal.prioridade) }}
+            >
               {senhaPrincipal.prioridade === 'SP' ? 'PRIORITÁRIO' : 
                senhaPrincipal.prioridade === 'SE' ? 'EXAME' : 'GERAL'}
-            </h3>
-            <p style={{ marginTop: '20px', color: '#bdc3c7' }}>Dirija-se ao guichê</p>
+            </div>
+
+            <div className={styles.guicheBadge}>
+               <span className={styles.guicheTitle}>GUICHÊ 01</span>
+               <span className={styles.guicheSub}>DIRIJA-SE AO LOCAL</span>
+            </div>
           </>
         ) : (
-          <h1 style={{ color: '#7f8c8d' }}>Aguardando chamadas...</h1>
+          <h1 className={styles.aguardando}>Aguardando chamadas...</h1>
         )}
       </div>
 
-      {/* Lado Direito: Histórico (Últimas 4) */}
-      <div style={{ flex: 1, padding: '20px', background: '#34495e' }}>
-        <h2 style={{ borderBottom: '1px solid #7f8c8d', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Monitor /> Últimas Chamadas
+      {/* --- Lado Direito: Histórico (Últimas 4) --- */}
+      <div className={styles.sidebar}>
+        <h2 className={styles.sidebarHeader}>
+          <Monitor size={32} /> Últimas Chamadas
         </h2>
         
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
-          {chamadas.slice(1).map(ticket => ( // Pula o primeiro (slice 1) pois já está na tela principal
-            <div key={ticket.ticketId} style={{ 
-              background: 'rgba(255,255,255,0.1)', 
-              padding: '15px', 
-              borderRadius: '10px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              borderLeft: `5px solid ${getCor(ticket.prioridade)}`
-            }}>
-              <span style={{ fontSize: '2rem', fontWeight: 'bold' }}>{ticket.codigo}</span>
-              <span style={{ fontSize: '1rem', color: '#bdc3c7' }}>
-                 {new Date(ticket.data_chamada).toLocaleTimeString().slice(0,5)}
+        <div className={styles.historyList}>
+          {chamadas.length > 0 ? chamadas.map(ticket => (
+            <div 
+              key={ticket.ticketId}
+              className={styles.historyItem}
+              style={{ borderLeft: `8px solid ${getCor(ticket.prioridade)}` }}
+            >
+              <span className={styles.historyCode} style={{ color: 'white' }}>
+                {ticket.codigo}
               </span>
+              
+              <div>
+                 <span className={styles.historyTime}>
+                    {new Date(ticket.data_chamada).toLocaleTimeString().slice(0,5)}
+                 </span>
+                 <span 
+                   className={styles.historyStatus}
+                   style={{ color: ticket.status === 'ATENDIDO' ? '#2ecc71' : '#f1c40f' }}
+                 >
+                    {ticket.status}
+                 </span>
+              </div>
             </div>
-          ))}
+          )) : (
+            <p style={{ color: '#7f8c8d', fontStyle: 'italic', textAlign: 'center' }}>Histórico vazio.</p>
+          )}
         </div>
       </div>
     </div>

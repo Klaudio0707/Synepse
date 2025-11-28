@@ -1,0 +1,243 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #ecf0f1;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 50px;
+}
+
+/* Container de Login (Tela Cheia) */
+.loginContainer {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2c3e50;
+}
+
+.loginForm {
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.loginTitle {
+  text-align: center;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.loginLink {
+  text-align: center;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  text-decoration: none;
+  margin-top: 10px;
+}
+
+.loginLink:hover {
+  text-decoration: underline;
+}
+
+/* Header do Painel */
+.header {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.headerTitle {
+  margin: 0;
+  color: #2c3e50;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-weight: bold;
+  color: #34495e;
+}
+
+/* Card Principal de Atendimento */
+.card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.labelSenha {
+  color: #7f8c8d;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+}
+
+.ticketCode {
+  font-size: 5rem;
+  margin: 10px 0;
+  color: #2980b9;
+  font-weight: 800;
+}
+
+/* Área do Formulário de Paciente */
+.formArea {
+  background: #d8d9db;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  text-align: left;
+  border: 1px solid #626669;
+  color: #333;
+}
+
+.formHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  color: #34495e;
+}
+
+.formHeader h3 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.1rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #333;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #626669;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+/* Botões */
+.btnGroup {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn {
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.1s, opacity 0.2s;
+  color: white;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Variantes de Botões */
+.btnPrimary { background-color: #2980b9; width: 100%; }
+.btnSuccess { background-color: #27ae60; flex: 1; }
+.btnDanger  { background-color: #c0392b; }
+.btnSecondary { background-color: #95a5a6; }
+.btnIcon { background: transparent; color: #7f8c8d; padding: 5px; } /* Ícone editar/lixeira */
+.btnIcon:hover { color: #34495e; background: rgba(0,0,0,0.05); }
+
+.btnBig {
+  padding: 20px 40px;
+  font-size: 1.2rem;
+  width: 100%;
+}
+
+/* Estado Vazio */
+.emptyState {
+  padding: 40px 0;
+}
+
+.emptyTitle {
+  color: #bdc3c7;
+  margin-bottom: 30px;
+  font-weight: 300;
+}
+
+.refreshArea {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.btnRefresh {
+  background: transparent;
+  border: none;
+  color: #95a5a6;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btnRefresh:hover {
+  color: #7f8c8d;
+  text-decoration: underline;
+}
