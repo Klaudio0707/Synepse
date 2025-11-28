@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { Op } from 'sequelize';
@@ -89,7 +89,7 @@ export class TicketService {
     });
 
     if (!proximoTicket) {
-      throw new Error('Não há senhas na fila para atendimento.');
+      throw new NotFoundException('Não há senhas na fila para atendimento.');
     }
 
     return proximoTicket.update({

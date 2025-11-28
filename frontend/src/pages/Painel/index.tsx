@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { api } from '../../services/api';
 import { Monitor } from 'lucide-react';
 import type { Ticket } from '../../types/ITicket';
+import useToast from '../../components/UseToaster';
 
 
 export function Painel() {
@@ -28,7 +29,8 @@ export function Painel() {
         setSenhaPrincipal(ultimos5[0]); // A primeira da lista é a principal
       }
     } catch (error) {
-      console.error("Erro ao buscar senhas", error);
+      useToast('Erro ao buscar senhas.\n'+error, 'error');
+      // console.error("Erro ao buscar senhas", error);
     }
   };
 

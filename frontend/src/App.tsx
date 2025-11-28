@@ -5,11 +5,13 @@ import { Admin } from './pages/Admin';
 import { Dashboard } from './pages/Dashboard';
 import { CadastroUsuario } from './pages/CadatroUsuario';
 import { Sidebar } from './components/Sidebar';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
     <BrowserRouter>
     <Sidebar/>
+    <ToastContainer />
     <Routes>
       <Route path="/" element={<Totem />} />
       <Route path="/painel" element={<Painel />} /> 

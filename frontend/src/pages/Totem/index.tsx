@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { api } from '../../services/api'; // Ajuste o caminho se necessário
 import { Activity, Ticket, User } from 'lucide-react';
 import  type { TicketResponse } from '../../types/ITicketResponse';
+import useToast from '../../components/UseToaster';
+
 
 
 export function Totem() { // Mudou de App para Totem
@@ -14,7 +16,7 @@ export function Totem() { // Mudou de App para Totem
       setTimeout(() => setSenha(null), 5000);
     } catch (error) {
       console.error(error);
-      alert('Erro ao conectar com o servidor.');
+      useToast('Erro ao conectar o servidor.', 'error');
     }
   };
 

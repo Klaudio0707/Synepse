@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from '../../services/api';
 import { Megaphone, CheckCircle, XCircle, User, LogIn, RefreshCw } from 'lucide-react';
+import useToast from '../../components/UseToaster';
 
 interface Ticket {
   ticketId: string;
@@ -56,7 +57,13 @@ export function Admin() {
         // console.log("Atendimento recuperado:", meuTicketPreso.codigo);
       }
     } catch (error) {
-      console.error("Erro ao recuperar sessão", error);
+      const mensagemBackend = error;
+      const mensagemFinal = mensagemBackend || "Erro ao chamar. Verifique a conexão.";
+      useToast(
+        Array.isArray(mensagemFinal) ? mensagemFinal[0] : mensagemFinal, 
+        'warning'
+      );
+     
     }
   };
 
@@ -71,13 +78,18 @@ export function Admin() {
         setUsuarioLogado(user);
         localStorage.setItem('synapse_user', JSON.stringify(user));
         window.dispatchEvent(new Event('loginStateChange')); 
-        alert(`Bem-vindo, ${user.usuarioNome}!`);
+        useToast(`Seja bem vindo ${user.usuarioNome}!`, 'success');
       } else {
-        alert("Email ou senha inválidos!");
+       useToast('Email ou senha inválidos', 'warning');
       }
     } catch (error) {
-      console.error(error);
-      alert("Erro ao conectar.");
+      
+      const mensagemBackend = error;
+      const mensagemFinal = mensagemBackend || "Erro ao chamar. Verifique a conexão.";
+      useToast(
+        Array.isArray(mensagemFinal) ? mensagemFinal[0] : mensagemFinal, 
+        'warning'
+      );
     }
   };
 
@@ -96,7 +108,17 @@ export function Admin() {
       });
       setTicketAtual(response.data);
     } catch (error: any) {
-      alert(error.response?.data?.message || "Erro ao chamar. Fila vazia?");
+   
+      const mensagemBackend = error.response?.data?.message;
+      
+      // 2. Se não tiver mensagem no Backend, usa uma genérica
+      const mensagemFinal = mensagemBackend || "Erro ao chamar. Verifique a conexão.";
+
+      // 3. Exibe no Toast (Se a mensagem for um Array, pega a primeira linha)
+      useToast(
+        Array.isArray(mensagemFinal) ? mensagemFinal[0] : mensagemFinal, 
+        'warning'
+      );
     } finally {
       setLoading(false);
     }

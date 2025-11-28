@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { PacienteEntidade } from './entities/paciente.entity';
 
@@ -20,7 +20,7 @@ export class PacienteService {
   // Permite atualizar Nome e CPF
   async update(id: string, dados: { nome?: string; CPF?: string }) {
     const paciente = await this.pacienteModel.findByPk(id);
-    if (!paciente) throw new Error('Paciente não encontrado');
+    if (!paciente) throw new NotFoundException('Paciente não encontrado');
     
     return paciente.update(dados);
   }
