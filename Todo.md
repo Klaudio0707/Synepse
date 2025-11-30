@@ -68,8 +68,5 @@ Este documento lista as pendências, melhorias técnicas e refatorações necess
 
 [ ] Testes:
 
-[ ] Escrever testes unitários (Jest) para o TicketService (garantir que a lógica de prioridade nunca quebre).
-
-[ ] Escrever testes E2E (Cypress ou Playwright) para o fluxo de atendimento.
 
 Este projeto foi desenvolvido como parte de um desafio técnico.
