@@ -16,11 +16,23 @@ export class PacienteEntidade extends Model<PacienteEntidade> {
   })
   declare nome: string;
 
+ @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  declare CPF?: string;
+
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  declare CPF?: string | null;
+  declare telefone?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  declare cep?: string;
 
   @HasMany(() => TicketEntidade)
   declare tickets?: TicketEntidade[];

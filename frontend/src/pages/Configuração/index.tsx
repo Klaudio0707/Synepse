@@ -1,19 +1,13 @@
 import { useState, useEffect } from 'react';
-import { api } from '../../services/api';
+import { api } from '../../config/api';
 import useToast from '../../components/UseToaster';
 import { Trash2, UserCog, Shield } from 'lucide-react';
-
-interface Usuario {
-  id: string;
-  usuarioNome: string;
-  usuarioEmail: string;
-  role: string;
-}
+import type { IUsuario } from '../../types/IUsuario';
 
 export function Configuracoes() {
-  const [userLogado, setUserLogado] = useState<Usuario | null>(null);
-  const [listaUsuarios, setListaUsuarios] = useState<Usuario[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [userLogado, setUserLogado] = useState<IUsuario| null>(null);
+  const [listaUsuarios, setListaUsuarios] = useState<IUsuario[]>([]);
+  // const [loading, setLoading] = useState(false);
 
   // Estados para edição do próprio perfil
   const [novoNome, setNovoNome] = useState("");
@@ -84,13 +78,13 @@ export function Configuracoes() {
             </h2>
             <div style={{ marginTop: '20px' }}>
               {listaUsuarios.map(u => (
-                <div key={u.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', borderBottom: '1px solid #f0f0f0', alignItems: 'center' }}>
+                <div key={u.usuarioId} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px', borderBottom: '1px solid #f0f0f0', alignItems: 'center' }}>
                   <div>
                     <strong>{u.usuarioNome}</strong>
                     <br/><span style={{ fontSize: '0.8rem', color: '#7f8c8d' }}>{u.usuarioEmail} ({u.role})</span>
                   </div>
-                  {u.id !== userLogado.id && ( // Não pode se excluir
-                    <button onClick={() => excluirUsuario(u.id)} style={{ background: 'transparent', border: 'none', color: '#c0392b', cursor: 'pointer' }}>
+                  {u.usuarioId !== userLogado.usuarioId && ( // Não pode se excluir
+                    <button onClick={() => excluirUsuario(u.usuarioId)} style={{ background: 'transparent', border: 'none', color: '#c0392b', cursor: 'pointer' }}>
                       <Trash2 size={20} />
                     </button>
                   )}

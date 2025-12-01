@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { api } from '../../services/api';
+import { api } from '../../config/api';
 import { UserPlus, Save, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 

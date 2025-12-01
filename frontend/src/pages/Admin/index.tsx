@@ -1,37 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { api } from '../../services/api';
+import { api } from '../../config/api';
 import { Megaphone, CheckCircle, XCircle, User, LogIn, RefreshCw, Edit2, Save, Trash2 } from 'lucide-react';
 import useToast from '../../components/UseToaster'; 
 import styles from './Admin.module.css';
-
-interface Ticket {
-  ticketId: string; // Padrão do Backend atualizado
-  codigo: string;
-  prioridade: string;
-  status: string;
-  usuarioId?: string;
-  pacienteId?: string;
-  paciente?: { nome: string; CPF?: string; telefone?: string; cep?: string }
-}
-
-interface Usuario {
-  usuarioId: string;
-  usuarioNome: string;
-  usuarioEmail: string;
-  usuarioSenha: string;
-  role: string;
-}
+import type { ITicket } from '../../types/ITicket';
+import type { IUsuario } from '../../types/IUsuario';
 
 export function Admin() {
-  const [usuarioLogado, setUsuarioLogado] = useState<Usuario | null>(null);
+  const [usuarioLogado, setUsuarioLogado] = useState<IUsuario | null>(null);
   
   // Login
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   
   // Atendimento
-  const [ticketAtual, setTicketAtual] = useState<Ticket | null>(null);
+  const [ticketAtual, setTicketAtual] = useState<ITicket | null>(null);
   const [loading, setLoading] = useState(false);
 
   // --- ESTADOS DO FORMULÁRIO 
@@ -65,7 +49,7 @@ export function Admin() {
       setNome(ticketAtual.paciente.nome);
       setCpf(ticketAtual.paciente.CPF || "");
       setTelefone(ticketAtual.paciente.telefone || "");
-      setCep(ticketAtual.paciente.cep || "");
+      setCep(ticketAtual.paciente.CEP|| "");
       
       // Se o nome for o código (ex: 251128-SP01), abre edição automático para o médico corrigir
       if (ticketAtual.paciente.nome === ticketAtual.codigo) {
@@ -77,8 +61,8 @@ export function Admin() {
   const recuperarAtendimentoPreso = async () => {
     try {
       const response = await api.get('/ticket');
-      const todos: Ticket[] = response.data;
-      const preso = todos.find(t => t.status === 'CHAMADO' && t.usuarioId === usuarioLogado?.usuarioId);
+      const todos: ITicket[] = response.data;
+      const preso = todos.find(t => t.status === 'CHAMADO' && t.usuario === usuarioLogado?.usuarioId);
       if (preso) {
         setTicketAtual(preso);
         useToast("Atendimento recuperado!", 'warning');
@@ -90,7 +74,7 @@ export function Admin() {
     e.preventDefault();
     try {
       const response = await api.get('/usuario');
-      const usuarios: Usuario[] = response.data;
+      const usuarios: IUsuario[] = response.data;
       const user = usuarios.find(u => u.usuarioEmail === email && u.usuarioSenha === senha);
       if (user) {
         setUsuarioLogado(user);
@@ -132,14 +116,14 @@ const chamarProximo = async () => {
   };
 
   const salvarPaciente = async () => {
-    if (!ticketAtual || !ticketAtual.pacienteId) return;
+    if (!ticketAtual || !ticketAtual.ticketId) return;
     try {
-      await api.patch(`/paciente/${ticketAtual.pacienteId}`, {
-        nome, CPF: cpf, telefone, cep
+      await api.patch(`/paciente/${ticketAtual.codigo}`, {
+        nome, CPF:cpf, telefone, CEP:cep
       });
       useToast("Dados salvos!", 'success');
       // Atualiza visualmente
-      setTicketAtual({ ...ticketAtual, paciente: { nome, CPF: cpf, telefone, cep } });
+      setTicketAtual({ ...ticketAtual, paciente: { nome, CPF:cpf, telefone, CEP:cep} });
       setEditando(false);
     } catch (error) { exibirErro(error); }
   };

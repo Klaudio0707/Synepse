@@ -13,4 +13,12 @@ export class CreateTicketDto {
   @IsString()
   @IsOptional()
   cpf?: string;
+
+  // @IsString()
+  // @IsOptional()
+  // telefone?: string;
+
+  // @IsString()
+  // @IsOptional()
+  // cep?: string;
 }

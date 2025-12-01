@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { api } from '../../services/api'; // Ajuste o caminho se necessário
+import { api } from '../../config/api'; // Ajuste o caminho se necessário
 import { Activity, Ticket, User } from 'lucide-react';
-import  type { TicketResponse } from '../../types/ITicketResponse';
+import type { ITicket } from '../../types/ITicket';
 import useToast from '../../components/UseToaster';
 
 
 
 export function Totem() { // Mudou de App para Totem
-  const [senha, setSenha] = useState<TicketResponse | null>(null);
+  const [senha, setSenha] = useState<ITicket | null>(null);
 
   const gerarSenha = async (prioridade: 'SP' | 'SG' | 'SE') => {
     try {

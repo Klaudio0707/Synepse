@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react';
-import { api } from '../../services/api';
+import { api } from '../../config/api';
 import { Monitor } from 'lucide-react';
-import type { Ticket } from '../../types/ITicket';
+import type { ITicket } from '../../types/ITicket';
 import useToast from '../../components/UseToaster';
 import styles from './Painel.module.css';
 
 export function Painel() {
-  const [chamadas, setChamadas] = useState<Ticket[]>([]);
-  const [senhaPrincipal, setSenhaPrincipal] = useState<Ticket | null>(null);
+  const [chamadas, setChamadas] = useState<ITicket[]>([]);
+  const [senhaPrincipal, setSenhaPrincipal] = useState<ITicket| null>(null);
 
   // Função que busca os dados
   const atualizarPainel = async () => {
     try {
       const response = await api.get('/ticket'); 
-      const todos: Ticket[] = response.data;
+      const todos: ITicket[] = response.data;
 
       // Filtra só quem foi CHAMADO
      const chamados = todos.filter(t => 
@@ -21,7 +21,7 @@ export function Painel() {
       );
 
       // Ordena: Mais recente primeiro (quem foi chamado agora fica no topo)
-      chamados.sort((a, b) => new Date(b.data_chamada).getTime() - new Date(a.data_chamada).getTime());
+      chamados.sort((a, b) => new Date(b.data_chamada!).getTime() - new Date(a.data_chamada!).getTime());
 
       // A senha principal é a primeira da lista (a mais recente)
       if (chamados.length > 0) {
@@ -106,7 +106,7 @@ export function Painel() {
               
               <div>
                  <span className={styles.historyTime}>
-                    {new Date(ticket.data_chamada).toLocaleTimeString().slice(0,5)}
+                    {new Date(ticket.data_chamada!).toLocaleTimeString().slice(0,5)}
                  </span>
                  <span 
                    className={styles.historyStatus}

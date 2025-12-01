@@ -33,7 +33,7 @@ export class TicketController {
         console.warn('⚠️ ALERTA: ID do usuário veio vazio!');
     }
 
-    return this.ticketService.chamarProximoTicket(usuarioId);
+    return this.ticketService.chamarProximo(usuarioId);
   }
   @Patch(':id/cancelar')
   cancelar(@Param('id') id: string) {
