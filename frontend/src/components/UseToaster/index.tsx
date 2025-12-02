@@ -8,7 +8,7 @@ const useToast = (
   
 
   const toastOptions: ToastOptions = {
-    position: "top-right",
+    position: "top-center",
     autoClose: 3000,
     hideProgressBar: false,
     closeOnClick: true,
@@ -29,6 +29,9 @@ const useToast = (
     case "warning":
       toast.warn(message, toastOptions);
       break;
+      case "info":
+        toast.warn(message, toastOptions);
+        break;
     default:
       toast(message, toastOptions);
       break;

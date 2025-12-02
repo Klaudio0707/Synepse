@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../config/api';
-import { Megaphone, CheckCircle, XCircle, User, LogIn, RefreshCw, Edit2, Save, Trash2 } from 'lucide-react';
+import { Megaphone, CheckCircle, XCircle, User, LogIn, RefreshCw, Edit2, Save, Trash2, Ticket } from 'lucide-react';
 import useToast from '../../components/UseToaster'; 
 import styles from './Admin.module.css';
 import type { ITicket } from '../../types/ITicket';
 import type { IUsuario } from '../../types/IUsuario';
+import TicketService from '../../services/Ticket.service';
 
 export function Admin() {
   const [usuarioLogado, setUsuarioLogado] = useState<IUsuario | null>(null);
@@ -60,14 +61,13 @@ export function Admin() {
 
   const recuperarAtendimentoPreso = async () => {
     try {
-      const response = await api.get('/ticket');
-      const todos: ITicket[] = response.data;
-      const preso = todos.find(t => t.status === 'CHAMADO' && t.usuario === usuarioLogado?.usuarioId);
+const ticket = await TicketService.get();
+      const preso = ticket.find(t => t.status === 'CHAMADO' && t.usuario === usuarioLogado?.usuarioId);
       if (preso) {
         setTicketAtual(preso);
-        useToast("Atendimento recuperado!", 'warning');
+        useToast("Atendimento recuperado!", 'info');
       }
-    } catch (e) { console.log('Nada preso'); }
+    } catch (e) { useToast("Sem ticket Pendente.", 'warning'); }
   };
 
   const handleLogin = async (e: React.FormEvent) => {

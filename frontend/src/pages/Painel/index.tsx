@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { api } from '../../config/api';
 import { Monitor } from 'lucide-react';
 import type { ITicket } from '../../types/ITicket';
 import useToast from '../../components/UseToaster';
 import styles from './Painel.module.css';
+import TicketService from '../../services/Ticket.service';
 
 export function Painel() {
   const [chamadas, setChamadas] = useState<ITicket[]>([]);
@@ -12,18 +12,15 @@ export function Painel() {
   // Função que busca os dados
   const atualizarPainel = async () => {
     try {
-      const response = await api.get('/ticket'); 
-      const todos: ITicket[] = response.data;
+   const ticket = await TicketService.get();
 
       // Filtra só quem foi CHAMADO
-     const chamados = todos.filter(t => 
+     const chamados = ticket.filter(t => 
         (t.status === 'CHAMADO' || t.status === 'ATENDIDO') && t.data_chamada
       );
 
       // Ordena: Mais recente primeiro (quem foi chamado agora fica no topo)
       chamados.sort((a, b) => new Date(b.data_chamada!).getTime() - new Date(a.data_chamada!).getTime());
-
-      // A senha principal é a primeira da lista (a mais recente)
       if (chamados.length > 0) {
         setSenhaPrincipal(chamados[0]);
         
@@ -36,7 +33,6 @@ export function Painel() {
     }
   };
 
-  // Efeito de "Polling" (Atualiza a cada 3 segundos)
   useEffect(() => {
     atualizarPainel(); // Busca a primeira vez
     const intervalo = setInterval(atualizarPainel, 3000); // Repete a cada 3s
@@ -56,7 +52,7 @@ export function Painel() {
   return (
    <div className={styles.container}>
       
-      {/* --- Lado Esquerdo: A Senha da Vez (Gigante) --- */}
+      {/* --- Lado Esquerdo --- */}
       <div className={styles.mainArea}>
         {senhaPrincipal ? (
           <>
@@ -87,7 +83,7 @@ export function Painel() {
         )}
       </div>
 
-      {/* --- Lado Direito: Histórico (Últimas 4) --- */}
+      {/* --- Lado Direito --- */}
       <div className={styles.sidebar}>
         <h2 className={styles.sidebarHeader}>
           <Monitor size={32} /> Últimas Chamadas
