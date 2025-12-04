@@ -59,9 +59,10 @@ export function Admin() {
     }
   }, [ticketAtual]);
 
+// OK 
   const recuperarAtendimentoPreso = async () => {
     try {
-const ticket = await TicketService.get();
+const ticket = await TicketService.get(); // service 
       const preso = ticket.find(t => t.status === 'CHAMADO' && t.usuario === usuarioLogado?.usuarioId);
       if (preso) {
         setTicketAtual(preso);
@@ -92,21 +93,13 @@ const ticket = await TicketService.get();
     localStorage.removeItem('synapse_user');
     window.dispatchEvent(new Event('loginStateChange'));
   };
-
+//ok   - patch
 const chamarProximo = async () => {
     if (!usuarioLogado) return;
     setLoading(true);
-    
-
-    // console.log("DADOS DO USUÁRIO LOGADO:", usuarioLogado);
-    // console.log("ID QUE ESTOU TENTANDO ENVIAR:", usuarioLogado.usuarioId);
-    // // ----------------------------
-
     try {
-      const response = await api.patch('/ticket/chamar', {
-        usuarioId: usuarioLogado.usuarioId 
-      });
-      setTicketAtual(response.data);
+let response = await TicketService.patch(usuarioLogado.usuarioId);
+      setTicketAtual(response);
       setEditando(true);
     } catch (error: any) {
       exibirErro(error);
