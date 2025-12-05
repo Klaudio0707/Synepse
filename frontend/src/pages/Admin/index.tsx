@@ -7,6 +7,7 @@ import styles from './Admin.module.css';
 import type { ITicket } from '../../types/ITicket';
 import type { IUsuario } from '../../types/IUsuario';
 import TicketService from '../../services/Ticket.service';
+import FormLogin from '../../components/FormLogin';
 
 
 
@@ -154,35 +155,15 @@ export function Admin() {
 
   if (!usuarioLogado) {
     return (
-      <div className={styles.loginContainer}>
-        <form onSubmit={handleLogin} className={styles.loginForm}>
-          <h2 className={styles.loginTitle}>Acesso Restrito</h2>
-
-          <input
-            placeholder="Email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            className={styles.input}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Senha"
-            value={senha}
-            onChange={e => setSenha(e.target.value)}
-            className={styles.input}
-            required
-          />
-
-          <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
-            <LogIn size={20} /> Entrar
-          </button>
-
-          <Link to="/cadastro" className={styles.loginLink}>
-            Não tem conta? Cadastre-se
-          </Link>
-        </form>
-      </div>
+      <>
+     <FormLogin
+     email={email}
+     senha={senha}
+     onEmailChange={setEmail}
+     onSenhaChange={setSenha}
+     onSubmit={handleLogin}
+      />
+      </>
     );
   }
 
