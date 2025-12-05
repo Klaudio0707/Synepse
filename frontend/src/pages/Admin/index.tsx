@@ -8,12 +8,7 @@ import type { ITicket } from '../../types/ITicket';
 import type { IUsuario } from '../../types/IUsuario';
 import TicketService from '../../services/Ticket.service';
 
-export enum  OpcoesTicket {
-  CHAMAR = 'chamar',
-  CANCELAR = 'cancelar',
-  FINALIZAR = 'finalizar',
-  DELETAR = 'deletar',
-}
+
 
 export function Admin() {
   const [usuarioLogado, setUsuarioLogado] = useState<IUsuario | null>(null);
@@ -69,7 +64,7 @@ export function Admin() {
   // OK 
   const recuperarAtendimentoPreso = async () => {
     try {
-      const ticket = await TicketService.get(); // service 
+      const ticket = await TicketService.getAll(); // service 
       const preso = ticket.find(t => t.status === 'CHAMADO' && t.usuario === usuarioLogado?.usuarioId);
       if (preso) {
         setTicketAtual(preso);
@@ -105,8 +100,7 @@ export function Admin() {
     if (!usuarioLogado) return;
     setLoading(true);
     try {
-      const response = await TicketService.patch(
-        OpcoesTicket.CHAMAR, OpcoesTicket.CHAMAR); // service
+      const response = await TicketService.chamar(usuarioLogado.usuarioId); // service
       setTicketAtual(response);
       setEditando(true);
     } catch (error: any) {
@@ -128,21 +122,21 @@ export function Admin() {
       setEditando(false);
     } catch (error) { exibirErro(error); }
   };
-
+//ok - patch Finalizar
   const finalizar = async () => {
     if (!ticketAtual) return;
     try {
-      await TicketService.patch(OpcoesTicket.FINALIZAR, ticketAtual.ticketId); // service
+      await TicketService.finalizar(ticketAtual.ticketId) ; // service
       setTicketAtual(null);
       useToast("Finalizado!", 'success');
     } catch (e) { exibirErro(e); }
   };
-
+//ok - patch cancelar
   const cancelar = async () => {
     if (!ticketAtual) return;
     if (!confirm("Confirmar ausência do paciente?")) return;
     try {
-      await TicketService.patch(OpcoesTicket.CANCELAR, ticketAtual.ticketId); // service
+      await TicketService.cancelar(ticketAtual.ticketId)// service
       setTicketAtual(null);
       useToast("Cancelado.", 'info');
     } catch (e) { exibirErro(e); }
@@ -152,7 +146,7 @@ export function Admin() {
     if (!ticketAtual) return;
     if (!confirm("EXCLUIR PERMANENTEMENTE?")) return;
     try {
-      await TicketService.patch(OpcoesTicket.DELETAR, ticketAtual.ticketId); // service
+      await TicketService.deletar(ticketAtual.ticketId); // service
       setTicketAtual(null);
       useToast("Excluído.", 'error');
     } catch (e) { exibirErro(e); }
