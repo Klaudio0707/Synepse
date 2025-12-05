@@ -2,19 +2,26 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../../config/api';
 import { Megaphone, CheckCircle, XCircle, User, LogIn, RefreshCw, Edit2, Save, Trash2, Ticket } from 'lucide-react';
-import useToast from '../../components/UseToaster'; 
+import useToast from '../../components/UseToaster';
 import styles from './Admin.module.css';
 import type { ITicket } from '../../types/ITicket';
 import type { IUsuario } from '../../types/IUsuario';
 import TicketService from '../../services/Ticket.service';
 
+export enum  OpcoesTicket {
+  CHAMAR = 'chamar',
+  CANCELAR = 'cancelar',
+  FINALIZAR = 'finalizar',
+  DELETAR = 'deletar',
+}
+
 export function Admin() {
   const [usuarioLogado, setUsuarioLogado] = useState<IUsuario | null>(null);
-  
+
   // Login
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  
+
   // Atendimento
   const [ticketAtual, setTicketAtual] = useState<ITicket | null>(null);
   const [loading, setLoading] = useState(false);
@@ -50,8 +57,8 @@ export function Admin() {
       setNome(ticketAtual.paciente.nome);
       setCpf(ticketAtual.paciente.CPF || "");
       setTelefone(ticketAtual.paciente.telefone || "");
-      setCep(ticketAtual.paciente.CEP|| "");
-      
+      setCep(ticketAtual.paciente.CEP || "");
+
       // Se o nome for o código (ex: 251128-SP01), abre edição automático para o médico corrigir
       if (ticketAtual.paciente.nome === ticketAtual.codigo) {
         setEditando(true);
@@ -59,10 +66,10 @@ export function Admin() {
     }
   }, [ticketAtual]);
 
-// OK 
+  // OK 
   const recuperarAtendimentoPreso = async () => {
     try {
-const ticket = await TicketService.get(); // service 
+      const ticket = await TicketService.get(); // service 
       const preso = ticket.find(t => t.status === 'CHAMADO' && t.usuario === usuarioLogado?.usuarioId);
       if (preso) {
         setTicketAtual(preso);
@@ -93,12 +100,13 @@ const ticket = await TicketService.get(); // service
     localStorage.removeItem('synapse_user');
     window.dispatchEvent(new Event('loginStateChange'));
   };
-//ok   - patch
-const chamarProximo = async () => {
+  //ok   - patch
+  const chamarProximo = async () => {
     if (!usuarioLogado) return;
     setLoading(true);
     try {
-let response = await TicketService.patch(usuarioLogado.usuarioId);
+      const response = await TicketService.patch(
+        OpcoesTicket.CHAMAR, OpcoesTicket.CHAMAR); // service
       setTicketAtual(response);
       setEditando(true);
     } catch (error: any) {
@@ -112,11 +120,11 @@ let response = await TicketService.patch(usuarioLogado.usuarioId);
     if (!ticketAtual || !ticketAtual.ticketId) return;
     try {
       await api.patch(`/paciente/${ticketAtual.codigo}`, {
-        nome, CPF:cpf, telefone, CEP:cep
+        nome, CPF: cpf, telefone, CEP: cep
       });
       useToast("Dados salvos!", 'success');
       // Atualiza visualmente
-      setTicketAtual({ ...ticketAtual, paciente: { nome, CPF:cpf, telefone, CEP:cep} });
+      setTicketAtual({ ...ticketAtual, paciente: { nome, CPF: cpf, telefone, CEP: cep } });
       setEditando(false);
     } catch (error) { exibirErro(error); }
   };
@@ -124,7 +132,7 @@ let response = await TicketService.patch(usuarioLogado.usuarioId);
   const finalizar = async () => {
     if (!ticketAtual) return;
     try {
-      await api.patch(`/ticket/${ticketAtual.ticketId}/finalizar`);
+      await TicketService.patch(OpcoesTicket.FINALIZAR, ticketAtual.ticketId); // service
       setTicketAtual(null);
       useToast("Finalizado!", 'success');
     } catch (e) { exibirErro(e); }
@@ -134,7 +142,7 @@ let response = await TicketService.patch(usuarioLogado.usuarioId);
     if (!ticketAtual) return;
     if (!confirm("Confirmar ausência do paciente?")) return;
     try {
-      await api.patch(`/ticket/${ticketAtual.ticketId}/cancelar`);
+      await TicketService.patch(OpcoesTicket.CANCELAR, ticketAtual.ticketId); // service
       setTicketAtual(null);
       useToast("Cancelado.", 'info');
     } catch (e) { exibirErro(e); }
@@ -144,7 +152,7 @@ let response = await TicketService.patch(usuarioLogado.usuarioId);
     if (!ticketAtual) return;
     if (!confirm("EXCLUIR PERMANENTEMENTE?")) return;
     try {
-      await api.delete(`/ticket/${ticketAtual.ticketId}`);
+      await TicketService.patch(OpcoesTicket.DELETAR, ticketAtual.ticketId); // service
       setTicketAtual(null);
       useToast("Excluído.", 'error');
     } catch (e) { exibirErro(e); }
@@ -152,30 +160,30 @@ let response = await TicketService.patch(usuarioLogado.usuarioId);
 
   if (!usuarioLogado) {
     return (
-     <div className={styles.loginContainer}>
+      <div className={styles.loginContainer}>
         <form onSubmit={handleLogin} className={styles.loginForm}>
           <h2 className={styles.loginTitle}>Acesso Restrito</h2>
-          
-          <input 
-            placeholder="Email" 
-            value={email} 
-            onChange={e => setEmail(e.target.value)} 
-            className={styles.input} 
-            required 
+
+          <input
+            placeholder="Email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            className={styles.input}
+            required
           />
-          <input 
-            type="password" 
-            placeholder="Senha" 
-            value={senha} 
-            onChange={e => setSenha(e.target.value)} 
-            className={styles.input} 
-            required 
+          <input
+            type="password"
+            placeholder="Senha"
+            value={senha}
+            onChange={e => setSenha(e.target.value)}
+            className={styles.input}
+            required
           />
-          
+
           <button type="submit" className={`${styles.btn} ${styles.btnPrimary}`}>
             <LogIn size={20} /> Entrar
           </button>
-          
+
           <Link to="/cadastro" className={styles.loginLink}>
             Não tem conta? Cadastre-se
           </Link>
@@ -187,7 +195,7 @@ let response = await TicketService.patch(usuarioLogado.usuarioId);
 
   return (
     <div className={styles.container}>
-      
+
       <div className={styles.header}>
         <h1 className={styles.headerTitle}>Atendimento</h1>
         <div className={styles.userInfo}>
@@ -199,25 +207,25 @@ let response = await TicketService.patch(usuarioLogado.usuarioId);
       </div>
 
       <div className={styles.card}>
-        
+
         {ticketAtual ? (
           <>
             <div className={styles.cardHeader}>
               <span className={styles.labelSenha}>Senha Chamada</span>
               <button onClick={excluirTicket} className={styles.btnIcon} title="Excluir Ticket">
-                <Trash2 size={20} color="#c0392b"/>
+                <Trash2 size={20} color="#c0392b" />
               </button>
             </div>
 
             <h1 className={styles.ticketCode}>{ticketAtual.codigo}</h1>
-            
+
             {/* Área do Formulário */}
             <div className={styles.formArea}>
               <div className={styles.formHeader}>
-                <h3><User size={20}/> Dados do Paciente</h3>
+                <h3><User size={20} /> Dados do Paciente</h3>
                 {!editando && (
                   <button onClick={() => setEditando(true)} className={styles.btnIcon} title="Editar">
-                    <Edit2 size={18} color="#f39c12"/>
+                    <Edit2 size={18} color="#f39c12" />
                   </button>
                 )}
               </div>
@@ -230,7 +238,7 @@ let response = await TicketService.patch(usuarioLogado.usuarioId);
                     <input placeholder="Telefone" value={telefone} onChange={e => setTelefone(e.target.value)} className={styles.input} />
                   </div>
                   <input placeholder="CEP" value={cep} onChange={e => setCep(e.target.value)} className={styles.input} />
-                  
+
                   <div className={styles.btnGroup}>
                     <button onClick={salvarPaciente} className={`${styles.btn} ${styles.btnSuccess}`}>Salvar</button>
                     <button onClick={() => setEditando(false)} className={`${styles.btn} ${styles.btnSecondary}`}>Cancelar</button>
@@ -257,20 +265,20 @@ let response = await TicketService.patch(usuarioLogado.usuarioId);
         ) : (
           <div className={styles.emptyState}>
             <h2 className={styles.emptyTitle}>Nenhum paciente na mesa</h2>
-            
-            <button 
-              onClick={chamarProximo} 
-              disabled={loading} 
+
+            <button
+              onClick={chamarProximo}
+              disabled={loading}
               className={`${styles.btn} ${styles.btnPrimary} ${styles.btnBig}`}
             >
-              <Megaphone size={28} /> 
+              <Megaphone size={28} />
               {loading ? "Buscando..." : "CHAMAR PRÓXIMO"}
             </button>
-            
+
             <div className={styles.refreshArea}>
-               <button onClick={recuperarAtendimentoPreso} className={styles.btnRefresh}>
-                 <RefreshCw size={16} /> Verificar pendências
-               </button>
+              <button onClick={recuperarAtendimentoPreso} className={styles.btnRefresh}>
+                <RefreshCw size={16} /> Verificar pendências
+              </button>
             </div>
           </div>
         )}
