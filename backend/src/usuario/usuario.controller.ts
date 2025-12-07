@@ -17,19 +17,16 @@ export class UsuarioController {
     return this.usuarioService.findAll();
   }
 
-  // Descomentado e corrigido (sem o + no id)
   @Get(':id')
   findOne(@Param('id') id: string) { 
     return this.usuarioService.findOne(id);
   }
 
-  // Descomentado e corrigido
   @Patch(':id')
   update(@Param('id') id: string, @Body() dados: any) {
     return this.usuarioService.update(id, dados);
   }
 
-  // Descomentado e corrigido
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usuarioService.remove(id);

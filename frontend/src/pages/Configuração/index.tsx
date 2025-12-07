@@ -41,8 +41,7 @@ export function Configuracoes() {
 
   const salvarPerfil = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Nota: Precisaríamos implementar o PATCH /usuario/:id no backend para isso funcionar 100%
-    // Por enquanto, fica como esqueleto visual da funcionalidade
+    // Nota: Precisa implementar o PATCH /usuario/:id no backend para isso funcionar 100%
     useToast("Funcionalidade de edição de perfil implementada no frontend!", 'info');
   };
 
@@ -70,7 +69,6 @@ export function Configuracoes() {
           </form>
         </div>
 
-        {/* Card: Gestão de Usuários (SÓ ADMIN) */}
         {userLogado?.role === 'ADMIN' && (
           <div style={{ flex: 2, minWidth: '300px', background: 'white', padding: '30px', borderRadius: '15px', boxShadow: '0 4px 10px rgba(0,0,0,0.05)' }}>
             <h2 style={{ borderBottom: '1px solid #eee', paddingBottom: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>

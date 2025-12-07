@@ -8,6 +8,7 @@ import type { ITicket } from '../../types/ITicket';
 import type { IUsuario } from '../../types/IUsuario';
 import TicketService from '../../services/Ticket.service';
 import FormLogin from '../../components/FormLogin';
+import BtnUsuario from '../../components/BtnUsuario';
 
 
 
@@ -172,13 +173,11 @@ export function Admin() {
     <div className={styles.container}>
 
       <div className={styles.header}>
-        <h1 className={styles.headerTitle}>Atendimento</h1>
-        <div className={styles.userInfo}>
-          <span>Olá, {usuarioLogado.usuarioNome}</span>
-          <button onClick={handleLogout} className={`${styles.btn} ${styles.btnSecondary}`} style={{ padding: '5px 15px', fontSize: '0.9rem' }}>
-            Sair
-          </button>
-        </div>
+      <h1 className={styles.headerTitle}>Atendimento</h1>
+      <BtnUsuario usuarioNome=
+      {usuarioLogado.usuarioNome}
+       onLogout={handleLogout} 
+       />
       </div>
 
       <div className={styles.card}>
