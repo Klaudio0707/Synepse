@@ -22,7 +22,8 @@ export default class TicketService {
     return response.data;
   }
 
-  static async deletar(id: string): Promise<void> {
+  static async deletar(id: string): Promise <string> {
     await api.delete(`/ticket/${id}`);
+    return 'Detelado com sucesso';
   }
 }

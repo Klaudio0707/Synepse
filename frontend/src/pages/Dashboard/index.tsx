@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { api } from '../../config/api';
-import {  Clock, Users, FileText, Calendar, Trash2 } from 'lucide-react';
+import {  Clock, Users, FileText, Calendar, Trash2, Ticket } from 'lucide-react';
 import useToast from '../../components/UseToaster';
 import styles from './Dashboard.module.css'; // CSS Module
 import type { ITicket } from '../../types/ITicket';
+import TicketService from '../../services/Ticket.service';
 
 export function Dashboard() {
   const [tickets, setTickets] = useState<ITicket[]>([]);
@@ -27,12 +28,11 @@ export function Dashboard() {
 
   const carregarDados = async () => {
     try {
-      const response = await api.get('/ticket');
-      const todos: ITicket[] = response.data;
-
-      // --- FILTRO DE DATA ---
+      const res = await TicketService.getAll();
+    
+      // const todos: ITicket[] = response.data;
       // Compara a parte da data (YYYY-MM-DD) da emissão com o filtro escolhido
-      const filtrados = todos.filter(t => 
+      const filtrados = res.filter(t => 
         t.data_emissao!.startsWith(filtroData)
       );
 
@@ -47,7 +47,7 @@ export function Dashboard() {
     if (!confirm("Tem certeza que deseja excluir este registro?")) return;
     
     try {
-      await api.delete(`/ticket/${id}`);
+      await TicketService.deletar(id);
       useToast("Registro excluído!", 'success');
       carregarDados(); // Atualiza a lista na hora
     } catch (error) {

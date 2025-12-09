@@ -9,6 +9,7 @@ import type { IUsuario } from '../../types/IUsuario';
 import TicketService from '../../services/Ticket.service';
 import FormLogin from '../../components/FormLogin';
 import BtnUsuario from '../../components/BtnUsuario';
+import FormPaciente from '../../components/FormPaciente';
 
 
 
@@ -124,16 +125,16 @@ export function Admin() {
       setEditando(false);
     } catch (error) { exibirErro(error); }
   };
-//ok - patch Finalizar
+  //ok - patch Finalizar
   const finalizar = async () => {
     if (!ticketAtual) return;
     try {
-      await TicketService.finalizar(ticketAtual.ticketId) ; // service
+      await TicketService.finalizar(ticketAtual.ticketId); // service
       setTicketAtual(null);
       useToast("Finalizado!", 'success');
     } catch (e) { exibirErro(e); }
   };
-//ok - patch cancelar
+  //ok - patch cancelar
   const cancelar = async () => {
     if (!ticketAtual) return;
     if (!confirm("Confirmar ausência do paciente?")) return;
@@ -157,27 +158,25 @@ export function Admin() {
   if (!usuarioLogado) {
     return (
       <>
-     <FormLogin
-     email={email}
-     senha={senha}
-     onEmailChange={setEmail}
-     onSenhaChange={setSenha}
-     onSubmit={handleLogin}
-      />
+        <FormLogin
+          email={email}
+          senha={senha}
+          onEmailChange={setEmail}
+          onSenhaChange={setSenha}
+          onSubmit={handleLogin}
+        />
       </>
     );
   }
-
-
   return (
     <div className={styles.container}>
 
       <div className={styles.header}>
-      <h1 className={styles.headerTitle}>Atendimento</h1>
-      <BtnUsuario usuarioNome=
-      {usuarioLogado.usuarioNome}
-       onLogout={handleLogout} 
-       />
+        <h1 className={styles.headerTitle}>Atendimento</h1>
+        <BtnUsuario usuarioNome=
+          {usuarioLogado.usuarioNome}
+          onLogout={handleLogout}
+        />
       </div>
 
       <div className={styles.card}>
@@ -194,38 +193,20 @@ export function Admin() {
             <h1 className={styles.ticketCode}>{ticketAtual.codigo}</h1>
 
             {/* Área do Formulário */}
-            <div className={styles.formArea}>
-              <div className={styles.formHeader}>
-                <h3><User size={20} /> Dados do Paciente</h3>
-                {!editando && (
-                  <button onClick={() => setEditando(true)} className={styles.btnIcon} title="Editar">
-                    <Edit2 size={18} color="#f39c12" />
-                  </button>
-                )}
-              </div>
-
-              {editando ? (
-                <div className={styles.formGroup}>
-                  <input placeholder="Nome Completo" value={nome} onChange={e => setNome(e.target.value)} className={styles.input} />
-                  <div className={styles.row}>
-                    <input placeholder="CPF" value={cpf} onChange={e => setCpf(e.target.value)} className={styles.input} />
-                    <input placeholder="Telefone" value={telefone} onChange={e => setTelefone(e.target.value)} className={styles.input} />
-                  </div>
-                  <input placeholder="CEP" value={cep} onChange={e => setCep(e.target.value)} className={styles.input} />
-
-                  <div className={styles.btnGroup}>
-                    <button onClick={salvarPaciente} className={`${styles.btn} ${styles.btnSuccess}`}>Salvar</button>
-                    <button onClick={() => setEditando(false)} className={`${styles.btn} ${styles.btnSecondary}`}>Cancelar</button>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <p><strong>Nome:</strong> {ticketAtual.paciente?.nome}</p>
-                  <p><strong>CPF:</strong> {ticketAtual.paciente?.CPF || '-'}</p>
-                  <p><strong>Tel:</strong> {ticketAtual.paciente?.telefone || '-'}</p>
-                </div>
-              )}
-            </div>
+            <FormPaciente
+              nome={nome}
+              cpf={cpf}
+              telefone={telefone}
+              cep={cep}
+              editando={editando}
+              onChangeNome={setNome}
+              onChangeCpf={setCpf}
+              onChangeTelefone={setTelefone}
+              onChangeCep={setCep}
+              onSalvar={salvarPaciente}
+              onEditar={() => setEditando(true)}
+              onCancelar={() => setEditando(false)}
+            />
 
             <div className={styles.actionButtons}>
               <button onClick={finalizar} className={`${styles.btn} ${styles.btnSuccess}`} style={{ padding: '15px 30px' }}>
