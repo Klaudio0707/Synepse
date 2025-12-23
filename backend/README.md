@@ -42,3 +42,60 @@ Um dos maiores desafios deste projeto foi implementar a especificação técnica
 ```typescript
 // Padrão: YYMMDD-PPSQ
 // Exemplo: 251223-NM01 (23 de Dez de 2025, Normal, Senha 01)
+
+````
+O sistema valida a data atual, verifica a última sequência do dia para aquele tipo de prioridade (PP) e incrementa a sequência (SQ), garantindo unicidade e rastreabilidade.
+
+🚀 Como Rodar o Projeto
+Pré-requisitos
+Node.js v18+
+
+Docker e Docker Compose
+
+Passo a Passo
+Clone o repositório
+
+Bash
+
+git clone [https://github.com/Klaudio0707/synepse-backend.git](https://github.com/Klaudio0707/synepse-backend.git)
+cd synepse-backend
+Configure as variáveis de ambiente
+
+Bash
+
+cp .env.example .env
+# Ajuste as credenciais do banco no arquivo .env
+Suba o banco de dados com Docker
+
+Bash
+
+docker-compose up -d
+Instale as dependências e rode as migrations
+
+Bash
+
+npm install
+npm run migration:run
+Inicie o servidor
+
+Bash
+
+npm run start:dev
+A API estará disponível em: http://localhost:3000
+
+📚 Documentação da API (Swagger)
+A documentação completa das rotas (Endpoints) está disponível automaticamente via Swagger. Após rodar o projeto, acesse:
+
+http://localhost:3000/api/docs
+
+🗂️ Estrutura do Banco de Dados
+O projeto utiliza PostgreSQL com as seguintes principais entidades:
+
+Tickets: Armazena o ID, status (Aguardando, Atendendo, Finalizado) e Timestamps.
+
+Queues: Definições das filas e suas prioridades.
+
+ServiceDesks (Guichês): Pontos de atendimento vinculados a usuários.
+
+🤝 Autor
+Cláudio Roberto
