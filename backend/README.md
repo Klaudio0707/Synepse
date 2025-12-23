@@ -65,12 +65,6 @@ Bash
 
 cp .env.example .env
 # Ajuste as credenciais do banco no arquivo .env
-Suba o banco de dados com Docker
-
-Bash
-
-docker-compose up -d
-Instale as dependências e rode as migrations
 
 Bash
 
@@ -83,10 +77,6 @@ Bash
 npm run start:dev
 A API estará disponível em: http://localhost:3000
 
-📚 Documentação da API (Swagger)
-A documentação completa das rotas (Endpoints) está disponível automaticamente via Swagger. Após rodar o projeto, acesse:
-
-http://localhost:3000/api/docs
 
 🗂️ Estrutura do Banco de Dados
 O projeto utiliza PostgreSQL com as seguintes principais entidades:
